@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Admin Dashboard</h1>
+        <button onclick="logout()" class="btn btn-danger">Logout</button>
+    </header>
+    <div class="container">
+        <h3>Add New Car</h3>
+        <form id="add-car-form" style="background:white; padding:20px; margin-bottom:20px;">
+            <div class="form-group"><input type="text" name="brand" placeholder="Brand" required></div>
+            <div class="form-group"><input type="text" name="model" placeholder="Model" required></div>
+            <div class="form-group"><input type="number" name="year" placeholder="Year" required></div>
+            <div class="form-group"><input type="number" name="mileage" placeholder="Mileage" required></div>
+            <div class="form-group"><input type="number" name="price" placeholder="Price" required></div>
+            <div class="form-group"><textarea name="description" placeholder="Description"></textarea></div>
+            <div class="form-group"><input type="file" name="image" required></div>
+            <button type="submit" class="btn">Add Car</button>
+        </form>
+
+        <h3>Manage Inventory</h3>
+        <div id="admin-list" class="card-grid"></div>
+    </div>
+    <script src="app.js"></script>
+    <script>
+        if (!getToken()) window.location.href = 'login.html';
+
+        // Load Cars
+        async function loadCars() {
+            const res = await fetch(`${API_URL}/cars`);
+            const cars = await res.json();
+            const container = document.getElementById('admin-list');
+            container.innerHTML = '';
+            cars.forEach(car => {
+                container.innerHTML += `
+                    <div class="card">
+                        <div class="card-body">
+                            <h4>${car.brand} ${car.model}</h4>
+                            <button onclick="deleteCar(${car.id})" class="btn btn-danger">Delete</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Add Car
+        document.getElementById('add-car-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            
+            const res = await fetch(`${API_URL}/admin/cars`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${getToken()}` },
+                body: formData
+            });
+
+            if (res.ok) {
+                alert('Car Added');
+                e.target.reset();
+                loadCars();
+            } else {
+                alert('Failed to add car');
+            }
+        });
+
+        // Delete Car
+        async function deleteCar(id) {
+            if(!confirm("Are you sure?")) return;
+            const res = await fetch(`${API_URL}/admin/cars/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${getToken()}` }
+            });
+            if (res.ok) loadCars();
+        }
+
+        loadCars();
+    </script>
+</body>
+</html>

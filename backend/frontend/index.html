@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Market</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>AutoMarket</h1>
+        <a href="login.html" class="btn">Admin Login</a>
+    </header>
+    <div class="container">
+
+</h2>
+        <div id="car-list" class="card-grid"></div>
+    </div>
+    <script src="app.js"></script>
+    <script>
+        fetch(`${API_URL}/cars`)
+            .then(res => res.json())
+            .then(data => {
+                const container = document.getElementById('car-list');
+                data.forEach(car => {
+                    const imgUrl = car.image_url.startsWith('http') ? car.image_url : `${API_URL}${car.image_url}`;
+                    container.innerHTML += `
+                        <div class="card">
+                            <img src="${imgUrl}" alt="${car.brand}">
+                            <div class="card-body">
+                                <h3>${car.year} ${car.brand} ${car.model}</h3>
+                                <p class="price">$${car.price.toLocaleString()}</p>
+                                <a href="detail.html?id=${car.id}" class="btn">View Details</a>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+    </script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Car Details</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>AutoMarket</h1>
+        <a href="index.html" class="btn">Back</a>
+    </header>
+    <div class="container" id="detail-container">
+        </div>
+    <script src="app.js"></script>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('id');
+
+        fetch(`${API_URL}/cars/${id}`)
+            .then(res => res.json())
+            .then(car => {
+                const imgUrl = car.image_url.startsWith('http') ? car.image_url : `${API_URL}${car.image_url}`;
+                document.getElementById('detail-container').innerHTML = `
+                    <div style="background:white; padding:20px; border-radius:8px;">
+                        <img src="${imgUrl}" style="max-width:100%; height:auto; border-radius:8px;">
+                        <h2>${car.year} ${car.brand} ${car.model}</h2>
+                        <h3 class="price">$${car.price.toLocaleString()}</h3>
+                        <p><strong>Mileage:</strong> ${car.mileage} miles</p>
+                        <p>${car.description}</p>
+                    </div>
+                `;
+            });
+    </script>
+</body>
+</html>

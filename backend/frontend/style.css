@@ -1,0 +1,12 @@
+body { font-family: sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+header { background: #333; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+.container { width: 90%; max-width: 1200px; margin: 20px auto; }
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+.card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+.card img { width: 100%; hieght: 200px; object-fit: cover; }
+.card-body { padding: 15px; }
+.price { color: #27ae60; font-weight: bold; font-size: 1.2em; }
+.btn { display: inline-block; padding: 10px 15px; background: #007bff; color: white; text-decoration: none; border-radius: 4px; border: none; cursor: pointer; }
+.btn-danger { background: #e74c3c; }
+.form-group { margin-bottom: 15px; }
+input, textarea { width: 100%; padding: 8px; box-sizing: border-box; }

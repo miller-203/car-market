@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container" style="max-width:400px; margin-top:50px;">
+        <h2>Admin Login</h2>
+        <form id="login-form">
+            <div class="form-group"><input type="text" id="username" placeholder="Username" required></div>
+            <div class="form-group"><input type="password" id="password" placeholder="Password" required></div>
+            <button type="submit" class="btn">Login</button>
+        </form>
+        <p id="error" style="color:red;"></p>
+    </div>
+    <script src="app.js"></script>
+    <script>
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            const res = await fetch(`${API_URL}/admin/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                localStorage.setItem('token', data.token);
+                window.location.href = 'dashboard.html';
+            } else {
+                document.getElementById('error').innerText = data.error;
+            }
+        });
+    </script>
+</body>
+</html>
