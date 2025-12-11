@@ -1,4 +1,4 @@
-const API_URL = ""; // Change this when deploying
+const API_URL = "http://localhost:3000"; // Change this when deploying
 
 function getToken() {
     return localStorage.getItem('token');
@@ -6,5 +6,5 @@ function getToken() {
 
 function logout() {
     localStorage.removeItem('token');
-    window.location.href = 'index.html';
+    window.location.href = '/';
 }

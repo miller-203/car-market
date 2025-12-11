@@ -18,6 +18,12 @@ CREATE TABLE IF NOT EXISTS admins (
     password_hash TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS car_images (
+    id SERIAL PRIMARY KEY,
+    car_id INT REFERENCES cars(id) ON DELETE CASCADE,
+    image_url TEXT NOT NULL
+);
+
 -- Insert a sample admin (Password is 'admin123')
 -- The hash below is generated using bcrypt cost 10 for 'admin123'
 INSERT INTO admins (username, password_hash) 

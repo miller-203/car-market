@@ -1,75 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
     <header>
-        <h1>Admin Dashboard</h1>
-        <button onclick="logout()" class="btn btn-danger">Logout</button>
+        <h1><i class="fa-solid fa-gauge"></i> Admin Dashboard</h1>
+        <nav>
+            <a href="index.html" target="_blank"><i class="fa-solid fa-eye"></i> View Site</a>
+            <button onclick="logout()" class="btn btn-danger" style="margin-left: 15px;">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </button>
+        </nav>
     </header>
-    <div class="container">
-        <h3>Add New Car</h3>
-        <form id="add-car-form" style="background:white; padding:20px; margin-bottom:20px;">
-            <div class="form-group"><input type="text" name="brand" placeholder="Brand" required></div>
-            <div class="form-group"><input type="text" name="model" placeholder="Model" required></div>
-            <div class="form-group"><input type="number" name="year" placeholder="Year" required></div>
-            <div class="form-group"><input type="number" name="mileage" placeholder="Mileage" required></div>
-            <div class="form-group"><input type="number" name="price" placeholder="Price" required></div>
-            <div class="form-group"><textarea name="description" placeholder="Description"></textarea></div>
-            <div class="form-group"><input type="file" name="image" required></div>
-            <button type="submit" class="btn">Add Car</button>
-        </form>
 
-        <h3>Manage Inventory</h3>
+    <div class="container">
+        <div class="form-box">
+            <h2 style="margin-top:0"><i class="fa-solid fa-plus-circle"></i> Add New Car</h2>
+            <form id="add-car-form">
+                <div class="form-group">
+                    <label>Make & Model</label>
+                    <div style="display:flex; gap:10px;">
+                        <input type="text" name="brand" placeholder="Make (e.g. BMW)" required>
+                        <input type="text" name="model" placeholder="Model (e.g. X5)" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Details</label>
+                    <div style="display:flex; gap:10px;">
+                        <input type="number" name="year" placeholder="Year" required>
+                        <input type="number" name="mileage" placeholder="Mileage (km)" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Price ($)</label>
+                    <input type="number" name="price" placeholder="Price" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" rows="3" placeholder="Car details..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Car Images (Select Multiple)</label>
+                    <input type="file" name="images" multiple required style="border:none; padding-left:0;">
+                    <small style="color:#666; display:block; margin-top:5px;">
+                        Hold <strong>Ctrl</strong> (or Cmd) to select multiple photos. The first one will be the cover.
+                    </small>
+                </div>
+
+                <button type="submit" class="btn btn-block">
+                    <i class="fa-solid fa-check"></i> Publish Car
+                </button>
+            </form>
+        </div>
+
+        <h3 style="margin-top: 50px;"><i class="fa-solid fa-list"></i> Current Inventory</h3>
         <div id="admin-list" class="card-grid"></div>
     </div>
+
     <script src="app.js"></script>
     <script>
         if (!getToken()) window.location.href = 'login.html';
 
-        // Load Cars
+        // Load Cars for Admin
         async function loadCars() {
             const res = await fetch(`${API_URL}/cars`);
             const cars = await res.json();
             const container = document.getElementById('admin-list');
             container.innerHTML = '';
+
             cars.forEach(car => {
+                const imgUrl = car.image_url.startsWith('http') ? car.image_url : `${API_URL}${car.image_url}`;
                 container.innerHTML += `
                     <div class="card">
+                        <img src="${imgUrl}" style="height: 150px;">
                         <div class="card-body">
                             <h4>${car.brand} ${car.model}</h4>
-                            <button onclick="deleteCar(${car.id})" class="btn btn-danger">Delete</button>
+                            <p class="price" style="font-size:1.2rem;">$${car.price.toLocaleString()}</p>
+                            <button onclick="deleteCar(${car.id})" class="btn btn-danger btn-block">
+                                <i class="fa-solid fa-trash"></i> Delete
+                            </button>
                         </div>
                     </div>
                 `;
             });
         }
 
-        // Add Car
+        // Add Car Logic (Handles Multiple Adds)
         document.getElementById('add-car-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const formData = new FormData(e.target);
-            
-            const res = await fetch(`${API_URL}/admin/cars`, {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${getToken()}` },
-                body: formData
-            });
+            const submitBtn = e.target.querySelector('button');
+            const originalText = submitBtn.innerHTML;
 
-            if (res.ok) {
-                alert('Car Added');
-                e.target.reset();
-                loadCars();
-            } else {
-                alert('Failed to add car');
+            // Show loading state
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading...';
+            submitBtn.disabled = true;
+
+            const formData = new FormData(e.target);
+
+            try {
+                const res = await fetch(`${API_URL}/admin/cars`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${getToken()}` },
+                    body: formData
+                });
+
+                if (res.ok) {
+                    // Success!
+                    alert('Car Added Successfully!');
+                    e.target.reset(); // Clear form for next car
+                    loadCars();       // Refresh list below
+                } else {
+                    alert('Failed to add car. Please try again.');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Error connecting to server.');
+            } finally {
+                // Restore button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
             }
         });
 
-        // Delete Car
         async function deleteCar(id) {
-            if(!confirm("Are you sure?")) return;
+            if (!confirm("Are you sure you want to delete this car?")) return;
             const res = await fetch(`${API_URL}/admin/cars/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${getToken()}` }
@@ -80,4 +145,5 @@
         loadCars();
     </script>
 </body>
+
 </html>

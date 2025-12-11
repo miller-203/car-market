@@ -16,17 +16,23 @@ import (
 	"gorm.io/gorm"
 )
 
-// --- Models ---
+type CarImage struct {
+	ID       uint   `json:"id" gorm:"primaryKey"`
+	CarID    uint   `json:"-"`
+	ImageURL string `json:"image_url"`
+}
+
 type Car struct {
-	ID          uint      `json:"id" gorm:"primaryKey"`
-	Brand       string    `json:"brand"`
-	Model       string    `json:"model"`
-	Year        int       `json:"year"`
-	Mileage     int       `json:"mileage"`
-	Price       int       `json:"price"`
-	Description string    `json:"description"`
-	ImageURL    string    `json:"image_url"`
-	CreatedAt   time.Time `json:"created_at"`
+	ID          uint       `json:"id" gorm:"primaryKey"`
+	Brand       string     `json:"brand"`
+	Model       string     `json:"model"`
+	Year        int        `json:"year"`
+	Mileage     int        `json:"mileage"`
+	Price       int        `json:"price"`
+	Description string     `json:"description"`
+	ImageURL    string     `json:"image_url"` // Main thumbnail
+	Images      []CarImage `json:"images" gorm:"foreignKey:CarID"` // Gallery
+	CreatedAt   time.Time  `json:"created_at"`
 }
 
 type Admin struct {
@@ -49,12 +55,12 @@ func connectDB() {
 	}
 	var err error
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if err != nil {
-		log.Fatal("Failed to connect to database:", err)
-	}
+    if err != nil {
+        log.Fatal("Failed to connect to database:", err)
+    }
 	// Auto Migrate
-	DB.AutoMigrate(&Car{}, &Admin{})
-	fmt.Println("Database Connected & Migrated")
+	DB.AutoMigrate(&Car{}, &Admin{}, &CarImage{})
+    fmt.Println("Database Connected & Migrated")
 }
 
 // --- Utils ---
@@ -99,7 +105,8 @@ func getCars(c *fiber.Ctx) error {
 func getCar(c *fiber.Ctx) error {
 	id := c.Params("id")
 	var car Car
-	if result := DB.First(&car, id); result.Error != nil {
+    // Add .Preload("Images") to fetch the gallery
+	if result := DB.Preload("Images").First(&car, id); result.Error != nil {
 		return c.Status(404).JSON(fiber.Map{"error": "Car not found"})
 	}
 	return c.JSON(car)
@@ -141,40 +148,58 @@ func login(c *fiber.Ctx) error {
 
 // Admin: Add Car
 func createCar(c *fiber.Ctx) error {
-	// Parse multipart form
-	_, err := c.MultipartForm()
-	if err != nil {
-		return c.Status(400).JSON(fiber.Map{"error": "Parse error"})
-	}
+    // 1. Parse Multipart Form
+    form, err := c.MultipartForm()
+    if err != nil {
+        return c.Status(400).JSON(fiber.Map{"error": "Parse error"})
+    }
 
-	// Handle Image Upload
-	file, err := c.FormFile("image")
-	imagePath := ""
-	if err == nil {
-		// Save file to ./uploads
-		filename := fmt.Sprintf("%d_%s", time.Now().Unix(), file.Filename)
-		imagePath = fmt.Sprintf("/uploads/%s", filename)
-		c.SaveFile(file, "."+imagePath)
-	}
+    // 2. Prepare basic car data
+    year, _ := strconv.Atoi(c.FormValue("year"))
+    mileage, _ := strconv.Atoi(c.FormValue("mileage"))
+    price, _ := strconv.Atoi(c.FormValue("price"))
 
-	// Parse other fields manually or via struct if sending JSON.
-	// Since we use FormData for file upload, we extract strings manually:
-	year, _ := strconv.Atoi(c.FormValue("year"))
-	mileage, _ := strconv.Atoi(c.FormValue("mileage"))
-	price, _ := strconv.Atoi(c.FormValue("price"))
+    car := Car{
+        Brand:       c.FormValue("brand"),
+        Model:       c.FormValue("model"),
+        Year:        year,
+        Mileage:     mileage,
+        Price:       price,
+        Description: c.FormValue("description"),
+    }
 
-	car := Car{
-		Brand:       c.FormValue("brand"),
-		Model:       c.FormValue("model"),
-		Year:        year,
-		Mileage:     mileage,
-		Price:       price,
-		Description: c.FormValue("description"),
-		ImageURL:    imagePath,
-	}
+    // 3. Handle Multiple Images
+    files := form.File["images"] // Frontend must use name="images"
+    var gallery []CarImage
 
-	DB.Create(&car)
-	return c.Status(201).JSON(car)
+    for i, file := range files {
+        // Create unique filename
+        filename := fmt.Sprintf("%d_%d_%s", time.Now().Unix(), i, file.Filename)
+        path := fmt.Sprintf("/uploads/%s", filename)
+
+        // Save to disk
+        if err := c.SaveFile(file, "."+path); err != nil {
+            fmt.Println("Error saving file:", err)
+            continue
+        }
+
+        // First image becomes the "Main Thumbnail"
+        if i == 0 {
+            car.ImageURL = path
+        }
+
+        // Add to gallery list
+        gallery = append(gallery, CarImage{ImageURL: path})
+    }
+
+    car.Images = gallery
+
+    // 4. Save to DB
+    if result := DB.Create(&car); result.Error != nil {
+        return c.Status(500).JSON(fiber.Map{"error": "Database error"})
+    }
+
+    return c.Status(201).JSON(car)
 }
 
 // Admin: Delete Car
