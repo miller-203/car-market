@@ -1,35 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Car Details</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <header>
-        <a href="/"><i class="fa-solid fa-house"></i><h1>AutoMarket</h1></a>
-        <a href="/" class="btn">Back</a>
+        <h1><i class="fa-solid fa-car"></i> AutoMarket</h1>
+        <a href="index.html" class="btn"><i class="fa-solid fa-arrow-left"></i> Back</a>
     </header>
+
     <div class="container" id="detail-container">
         </div>
+
     <script src="app.js"></script>
     <script>
         const params = new URLSearchParams(window.location.search);
         const id = params.get('id');
 
-        fetch(`${API_URL}/cars/${id}`)
-            .then(res => res.json())
-            .then(car => {
-                const imgUrl = car.image_url.startsWith('http') ? car.image_url : `${API_URL}${car.image_url}`;
-                document.getElementById('detail-container').innerHTML = `
-                    <div style="background:white; padding:20px; border-radius:8px;">
-                        <img src="${imgUrl}" style="max-width:100%; height:auto; border-radius:8px;">
-                        <h2>${car.year} ${car.brand} ${car.model}</h2>
-                        <h3 class="price">$${car.price.toLocaleString()}</h3>
-                        <p><strong>Mileage:</strong> ${car.mileage} miles</p>
-                        <p>${car.description}</p>
+        // Variables for the slider
+        let currentImageIndex = 0;
+        let carImages = []; 
+
+        async function loadCarDetail() {
+            try {
+                const res = await fetch(`${API_URL}/cars/${id}`);
+                if (!res.ok) throw new Error("Car not found");
+                
+                const car = await res.json();
+                
+                // 1. Prepare Images: Check if gallery exists, otherwise fall back to main image
+                if (car.images && car.images.length > 0) {
+                    carImages = car.images.map(img => img.image_url);
+                } else {
+                    carImages = [car.image_url];
+                }
+
+                // 2. Render the Page
+                const container = document.getElementById('detail-container');
+                container.innerHTML = `
+                    <div class="form-box" style="max-width: 900px;">
+                        
+                        <div class="slider-container">
+                            <button class="slider-btn prev-btn" onclick="changeSlide(-1)">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </button>
+                            
+                            <img id="main-slider-image" src="${getFullUrl(carImages[0])}" class="slider-img" alt="Car Image">
+                            
+                            <button class="slider-btn next-btn" onclick="changeSlide(1)">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                        </div>
+                        
+                        <div style="padding: 10px;">
+                            <h2 style="margin-bottom: 5px;">${car.year} ${car.brand} ${car.model}</h2>
+                            <h3 class="price" style="font-size: 2rem;">$${car.price.toLocaleString()}</h3>
+                            
+                            <div class="card-info" style="margin: 20px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 15px 0;">
+                                <span><i class="fa-solid fa-gauge"></i> ${car.mileage.toLocaleString()} km</span>
+                                <span><i class="fa-solid fa-calendar"></i> ${car.year}</span>
+                                <span><i class="fa-solid fa-tag"></i> ${car.brand}</span>
+                            </div>
+
+                            <h4>Description</h4>
+                            <p style="white-space: pre-wrap; color: #555;">${car.description}</p>
+                        </div>
                     </div>
                 `;
-            });
+            } catch (err) {
+                document.getElementById('detail-container').innerHTML = `<h2 style="text-align:center; color:red;">Error: ${err.message}</h2>`;
+            }
+        }
+
+        // --- Slider Functions ---
+        function changeSlide(direction) {
+            currentImageIndex += direction;
+
+            // Loop Logic: If at end, go to start. If at start, go to end.
+            if (currentImageIndex >= carImages.length) {
+                currentImageIndex = 0;
+            } else if (currentImageIndex < 0) {
+                currentImageIndex = carImages.length - 1;
+            }
+
+            // Update Image Source
+            document.getElementById('main-slider-image').src = getFullUrl(carImages[currentImageIndex]);
+        }
+
+        // Helper to fix URL if it's local or external
+        function getFullUrl(path) {
+            return path.startsWith('http') ? path : `${API_URL}${path}`;
+        }
+
+        loadCarDetail();
     </script>
 </body>
 </html>
