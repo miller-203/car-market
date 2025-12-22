@@ -39,79 +39,37 @@
     </footer>
 
     <script src="app.js"></script>
-<script>
-    document.getElementById('login-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        // 1. Get Elements
-        const usernameInput = document.getElementById('username');
-        const passwordInput = document.getElementById('password');
-        const btn = e.target.querySelector('button');
-        const errorDisplay = document.getElementById('error');
-        
-        // 2. Clear Previous Errors
-        errorDisplay.innerText = '';
-        usernameInput.classList.remove('error');
-        passwordInput.classList.remove('error');
-
-        // 3. Client-Side Validation (Check before sending)
-        let hasError = false;
-
-        if (!usernameInput.value.trim()) {
-            usernameInput.classList.add('error');
-            hasError = true;
-        }
-        if (!passwordInput.value.trim()) {
-            passwordInput.classList.add('error');
-            hasError = true;
-        }
-
-        if (hasError) {
-            errorDisplay.innerText = "Please fill in all fields.";
-            return; // Stop here, don't talk to server
-        }
-
-        // 4. Send to Server
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Verifying...';
-        btn.disabled = true;
-
-        try {
-            const res = await fetch(`${API_URL}/admin/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    username: usernameInput.value, 
-                    password: passwordInput.value 
-                })
+    <script>
+        fetch(`${API_URL}/cars`)
+            .then(res => res.json())
+            .then(data => {
+                const container = document.getElementById('car-list');
+                data.forEach(car => {
+                    const imgUrl = car.image_url.startsWith('http') ? car.image_url : `${API_URL}${car.image_url}`;
+                    
+                    // Improved Card Design
+                    container.innerHTML += `
+                        <a href="detail.html?id=${car.id}" class="card">
+                            <div class="card-img-wrapper">
+                                <img src="${imgUrl}" alt="${car.brand}">
+                            </div>
+                            <div class="card-body">
+                                <h3 class="card-title">${car.brand} ${car.model}</h3>
+                                
+                                <div class="specs-row">
+                                    <span class="spec-badge"><i class="fa-solid fa-calendar"></i> ${car.year}</span>
+                                    <span class="spec-badge"><i class="fa-solid fa-gauge"></i> ${car.mileage.toLocaleString()} km</span>
+                                </div>
+                                
+                                <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:auto;">
+                                    <p class="price">$${car.price.toLocaleString()}</p>
+                                    <span style="color:var(--primary); font-size:0.9rem; font-weight:600;">View <i class="fa-solid fa-arrow-right"></i></span>
+                                </div>
+                            </div>
+                        </a>
+                    `;
+                });
             });
-
-            const data = await res.json();
-            
-            if (res.ok) {
-                localStorage.setItem('token', data.token);
-                btn.style.background = "#10b981"; 
-                btn.innerHTML = '<i class="fa-solid fa-check"></i> Success!';
-                setTimeout(() => window.location.href = 'dashboard.html', 800);
-            } else {
-                // Server Error (Wrong password)
-                errorDisplay.innerText = data.error || 'Invalid username or password';
-                passwordInput.classList.add('error'); // Highlight password box
-                passwordInput.value = ''; // Clear password
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
-        } catch (err) {
-            errorDisplay.innerText = 'Server Offline. Please try again later.';
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        }
-    });
-    
-    // Remove red border when user starts typing
-    document.querySelectorAll('input').forEach(input => {
-        input.addEventListener('input', () => input.classList.remove('error'));
-    });
-</script>
+    </script>
 </body>
 </html>

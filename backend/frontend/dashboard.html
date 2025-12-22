@@ -283,7 +283,21 @@
             }
         }
 
-        // --- Add Car Logic ---
+        // --- Delete Logic ---
+        async function deleteCar(id) {
+            if (!confirm("Are you sure?")) return;
+            try {
+                await fetch(`${API_URL}/admin/cars/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                });
+                loadCars();
+            } catch (err) { alert("Error"); }
+        }
+
+        // --- Inside dashboard.html script tag ---
+
+        // 1. Helper to show error on specific field
         function showError(inputName, message) {
             const input = document.querySelector(`[name="${inputName}"]`);
             if (input) {
@@ -382,7 +396,6 @@
                 if (msg) msg.style.display = 'none';
             });
         });
-
         loadCars();
     </script>
 </body>
