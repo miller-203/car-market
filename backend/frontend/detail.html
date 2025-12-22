@@ -1,23 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Car Details</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-      <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
 
 </head>
+
 <body>
     <header>
-        <a class="logo" href="index.html">Al Watani</a>
+        <a class="logo" href="/">Al Watani</a>
         <a href="index.html" class="btn"><i class="fa-solid fa-arrow-left"></i> Back</a>
     </header>
 
     <div class="container" id="detail-container">
-        </div>
+    </div>
 
+    <footer>
+        <p style="text-align: center;">&copy; 2023 Al Watani. All rights reserved.</p>
+    </footer>
     <script src="app.js"></script>
     <script>
         const params = new URLSearchParams(window.location.search);
@@ -25,15 +30,15 @@
 
         // Variables for the slider
         let currentImageIndex = 0;
-        let carImages = []; 
+        let carImages = [];
 
         async function loadCarDetail() {
             try {
                 const res = await fetch(`${API_URL}/cars/${id}`);
                 if (!res.ok) throw new Error("Car not found");
-                
+
                 const car = await res.json();
-                
+
                 // 1. Prepare Images: Check if gallery exists, otherwise fall back to main image
                 if (car.images && car.images.length > 0) {
                     carImages = car.images.map(img => img.image_url);
@@ -101,4 +106,5 @@
         loadCarDetail();
     </script>
 </body>
+
 </html>

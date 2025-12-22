@@ -1,15 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+      <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+
 </head>
+
 <body>
     <header>
-        <h1><i class="fa-solid fa-car"></i> AutoMarket</h1>
+        <a class="logo" href="">Al Watani</a>
+
         <a href="index.html" class="btn"><i class="fa-solid fa-house"></i> Home</a>
     </header>
 
@@ -18,28 +23,31 @@
             <div style="margin-bottom: 20px;">
                 <i class="fa-solid fa-user-lock" style="font-size: 3rem; color: var(--primary);"></i>
             </div>
-            
+
             <h2 style="margin-bottom: 20px;">Admin Login</h2>
-            
+
             <form id="login-form" style="text-align: left;">
                 <div class="form-group">
                     <label><i class="fa-solid fa-user"></i> Username</label>
                     <input type="text" id="username" placeholder="Enter username" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label><i class="fa-solid fa-key"></i> Password</label>
                     <input type="password" id="password" placeholder="Enter password" required>
                 </div>
-                
+
                 <button type="submit" class="btn btn-block">
                     <i class="fa-solid fa-right-to-bracket"></i> Login
                 </button>
             </form>
-            
+
             <p id="error" style="color: var(--danger); margin-top: 15px; text-align: center; font-weight: bold;"></p>
         </div>
     </div>
+    <footer>
+        <p style="text-align: center;">&copy; 2023 Al Watani. All rights reserved.</p>
+    </footer>
 
     <script src="app.js"></script>
     <script>
@@ -64,4 +72,5 @@
         });
     </script>
 </body>
+
 </html>
