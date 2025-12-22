@@ -1,87 +1,228 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>Admin Dashboard | Al Watani</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+    
+    <style>
+        body { background-color: #f8fafc; }
+        
+        /* Dashboard Header */
+        .dashboard-header {
+            background: var(--white);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
+        /* Top Action Bar */
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 40px 0 30px 0;
+        }
+
+        /* Modal (Popup) Styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 1.5rem;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .close-btn:hover { color: var(--danger); }
+
+        /* Rich Admin Card */
+        .admin-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .admin-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+
+        .admin-card-img {
+            height: 200px;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .admin-card-body { padding: 15px; flex-grow: 1; }
+        
+        .admin-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 0.85rem;
+            color: #64748b;
+            margin: 10px 0;
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .admin-actions {
+            padding: 15px;
+            border-top: 1px solid #f1f5f9;
+            display: flex;
+            gap: 10px;
+        }
+    </style>
 </head>
-
 <body>
-    <header>
-        <a class="logo" href="/">Al Watani</a>
 
-        <nav>
-            <a href="index.html" target="_blank"><i class="fa-solid fa-eye"></i> View Site</a>
-            <button onclick="logout()" class="btn btn-danger" style="margin-left: 15px;">
-                <i class="fa-solid fa-right-from-bracket"></i> Logout
-            </button>
-        </nav>
+    <header class="dashboard-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <i class="fa-solid fa-gauge-high" style="color:var(--primary); font-size: 1.2rem;"></i>
+            <span style="font-weight: 700; font-size: 1.2rem; color: var(--dark);">Admin Panel</span>
+        </div>
+        <button onclick="logout()" class="btn btn-outline" style="color: var(--danger); border-color: #fecaca; font-size: 0.9rem; padding: 8px 15px;">
+            <i class="fa-solid fa-power-off"></i> Logout
+        </button>
     </header>
 
     <div class="container">
-        <div class="form-box">
-            <h2 style="margin-top:0"><i class="fa-solid fa-plus-circle"></i> Add New Car</h2>
+        <div class="action-bar">
+            <div>
+                <h1 style="font-size: 2rem; margin-bottom: 5px;">Inventory</h1>
+                <p style="color: #64748b;">Manage your vehicle listings.</p>
+            </div>
+            <button onclick="openModal()" class="btn" style="padding: 12px 25px; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3);">
+                <i class="fa-solid fa-plus"></i> &nbsp;Add New Car
+            </button>
+        </div>
+
+        <div id="admin-list" class="card-grid">
+            </div>
+    </div>
+
+    <div id="car-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2 style="margin-bottom: 25px;">Create New Listing</h2>
+            
             <form id="add-car-form">
-                <div class="form-group">
-                    <label>Make & Model</label>
-                    <div style="display:flex; gap:10px;">
-                        <input type="text" name="brand" placeholder="Make (e.g. BMW)" required>
-                        <input type="text" name="model" placeholder="Model (e.g. X5)" required>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div>
+                        <label style="font-size:0.9rem; font-weight:600;">Brand</label>
+                        <input type="text" name="brand" placeholder="BMW" required>
+                    </div>
+                    <div>
+                        <label style="font-size:0.9rem; font-weight:600;">Model</label>
+                        <input type="text" name="model" placeholder="X5" required>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Details</label>
-                    <div style="display:flex; gap:10px;">
-                        <input type="number" name="year" placeholder="Year" required>
-                        <input type="number" name="mileage" placeholder="Mileage (km)" required>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                    <div>
+                        <label style="font-size:0.9rem; font-weight:600;">Year</label>
+                        <input type="number" name="year" placeholder="2023" required>
+                    </div>
+                    <div>
+                        <label style="font-size:0.9rem; font-weight:600;">Mileage (km)</label>
+                        <input type="number" name="mileage" placeholder="50000" required>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Price ($)</label>
+                <div style="margin-top: 15px;">
+                    <label style="font-size:0.9rem; font-weight:600;">Price ($)</label>
                     <input type="number" name="price" placeholder="Price" required>
                 </div>
 
-                <div class="form-group">
-                    <label>Description</label>
+                <div style="margin-top: 15px;">
+                    <label style="font-size:0.9rem; font-weight:600;">Description</label>
                     <textarea name="description" rows="3" placeholder="Car details..."></textarea>
                 </div>
 
-                <div class="form-group">
-                    <label>Car Images (Select Multiple)</label>
-                    <input type="file" name="images" multiple required style="border:none; padding-left:0;">
-                    <small style="color:#666; display:block; margin-top:5px;">
-                        Hold <strong>Ctrl</strong> (or Cmd) to select multiple photos. The first one will be the cover.
-                    </small>
+                <div style="margin-top: 15px;">
+                    <label style="font-size:0.9rem; font-weight:600;">Images</label>
+                    <input type="file" name="images" multiple required style="background: white;">
+                    <small style="color: #64748b;">Select multiple images using Ctrl/Cmd</small>
                 </div>
 
-                <button type="submit" class="btn btn-block">
-                    <i class="fa-solid fa-check"></i> Publish Car
+                <button type="submit" class="btn btn-block" style="margin-top: 25px; padding: 15px;">
+                    Publish Car
                 </button>
             </form>
         </div>
-
-        <hr style="border: 0; border-top: 1px solid #ddd; margin: 40px 0;">
-
-        <h3 style="margin-bottom: 20px;"><i class="fa-solid fa-list"></i> Current Inventory</h3>
-
-        <div id="admin-list" class="card-grid"></div>
     </div>
 
-    <footer>
-        <p style="text-align: center;">&copy; 2023 Al Watani. All rights reserved.</p>
-    </footer>
     <script src="app.js"></script>
     <script>
         if (!getToken()) window.location.href = 'login.html';
 
-        // Load Cars for Admin
+        // --- Modal Logic ---
+        const modal = document.getElementById('car-modal');
+
+        function openModal() {
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden'; // Stop scrolling background
+        }
+
+        function closeModal() {
+            modal.classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close if clicked outside
+        window.onclick = function(event) {
+            if (event.target == modal) closeModal();
+        }
+
+        // --- Load Cars ---
         async function loadCars() {
             try {
                 const res = await fetch(`${API_URL}/cars`);
@@ -92,16 +233,26 @@
                 cars.forEach(car => {
                     const imgUrl = car.image_url.startsWith('http') ? car.image_url : `${API_URL}${car.image_url}`;
 
-                    // Same card layout as index.html, but with Delete button
+                    // Rich Card with Data
                     container.innerHTML += `
-                        <div class="card">
-                            <img src="${imgUrl}" alt="${car.brand}" class="dashboard-img">
-                            <div class="card-body">
-                                <h3 class="card-title">${car.year} ${car.brand} ${car.model}</h3>
-                                <p class="price">$${car.price.toLocaleString()}</p>
+                        <div class="admin-card">
+                            <img src="${imgUrl}" class="admin-card-img">
+                            <div class="admin-card-body">
+                                <h3 style="font-size:1.1rem; margin-bottom:5px;">${car.brand} ${car.model}</h3>
+                                <p style="color:var(--primary); font-weight:800; font-size:1.2rem;">$${car.price.toLocaleString()}</p>
                                 
-                                <button onclick="deleteCar(${car.id})" class="btn btn-danger btn-block">
-                                    <i class="fa-solid fa-trash"></i> Delete Car
+                                <div class="admin-stats">
+                                    <span><i class="fa-solid fa-calendar"></i> ${car.year}</span>
+                                    <span><i class="fa-solid fa-gauge"></i> ${car.mileage.toLocaleString()}km</span>
+                                    <span style="grid-column: span 2;"><i class="fa-solid fa-hashtag"></i> ID: ${car.id}</span>
+                                </div>
+                            </div>
+                            <div class="admin-actions">
+                                <a href="detail.html?id=${car.id}" target="_blank" class="btn btn-outline" style="flex:1; border-color:#cbd5e1; color:#64748b; font-size:0.9rem;">
+                                    <i class="fa-solid fa-eye"></i> View
+                                </a>
+                                <button onclick="deleteCar(${car.id})" class="btn btn-danger" style="flex:1; font-size:0.9rem;">
+                                    <i class="fa-solid fa-trash"></i> Delete
                                 </button>
                             </div>
                         </div>
@@ -112,14 +263,13 @@
             }
         }
 
-        // Add Car Logic
+        // --- Add Car Logic ---
         document.getElementById('add-car-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-
-            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading...';
-            submitBtn.disabled = true;
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = 'Uploading...';
+            btn.disabled = true;
 
             const formData = new FormData(e.target);
 
@@ -131,44 +281,35 @@
                 });
 
                 if (res.ok) {
-                    alert('Car Added Successfully!');
+                    closeModal();
                     e.target.reset();
                     loadCars();
+                    alert("Car added successfully!");
                 } else {
                     const data = await res.json();
-                    alert('Failed: ' + (data.error || 'Unknown error'));
+                    alert('Error: ' + data.error);
                 }
             } catch (error) {
-                console.error(error);
                 alert('Server Error');
             } finally {
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
+                btn.innerHTML = originalText;
+                btn.disabled = false;
             }
         });
 
-        // Delete Car Logic
+        // --- Delete Logic ---
         async function deleteCar(id) {
-            if (!confirm("Are you sure you want to delete this car? This action cannot be undone.")) return;
-
+            if (!confirm("Are you sure?")) return;
             try {
-                const res = await fetch(`${API_URL}/admin/cars/${id}`, {
+                await fetch(`${API_URL}/admin/cars/${id}`, {
                     method: 'DELETE',
                     headers: { 'Authorization': `Bearer ${getToken()}` }
                 });
-
-                if (res.ok) {
-                    loadCars(); // Reload the grid
-                } else {
-                    alert("Failed to delete car.");
-                }
-            } catch (err) {
-                alert("Error connecting to server.");
-            }
+                loadCars();
+            } catch (err) { alert("Error"); }
         }
 
         loadCars();
     </script>
 </body>
-
 </html>

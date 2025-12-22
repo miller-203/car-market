@@ -1,34 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Car Market</title>
+    <title>Al Watani | Premium Car Market</title>
     <link rel="stylesheet" href="style.css">
-      <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-
 <body>
     <header>
-        <a class="logo" href="">Al Watani</a>
+        <a class="logo" href="/">Al Watani</a>
         <nav>
             <a href="/">Home</a>
-            <a href="https://maps.app.goo.gl/mr5NXXPFRqJfhDox6" target="_blank">Location</a>
-            <!-- <iframe src="https://www.google.com/maps?q=mr5NXXPFRqJfhDox6&output=embed" width="100%" height="450"
-                style="border:0;" allowfullscreen="" loading="lazy">
-            </iframe> -->
+            <a href="https://maps.app.goo.gl/53EEvV7wZupX5ht47" target="_blank">Locations</a>
         </nav>
-        <a href="login.html" class="btn">Admin Login</a>
+        <a href="login.html" class="btn" style="margin-left: 20px;">
+            <i class="fa-solid fa-lock"></i> &nbsp;Admin
+        </a>
     </header>
+
+    <section class="hero">
+        <h1>Find Your Dream Car</h1>
+        <p>Morocco's most trusted marketplace for premium vehicles.</p>
+        <div style="margin-top: 20px;">
+            <a href="#car-list" class="btn btn-primary" style="padding: 15px 30px; font-size: 1.1rem;">
+                Browse Inventory
+            </a>
+        </div>
+    </section>
+
     <div class="container">
-        </h2>
+        <h3 class="section-title"><i class="fa-solid fa-fire" style="color:var(--danger)"></i> Latest Arrivals</h3>
         <div id="car-list" class="card-grid"></div>
     </div>
+
     <footer>
-        <p style="text-align: center;">&copy; 2023 Al Watani. All rights reserved.</p>
+        <p>&copy; 2023 Al Watani. All rights reserved.</p>
     </footer>
+
     <script src="app.js"></script>
     <script>
         fetch(`${API_URL}/cars`)
@@ -37,19 +46,30 @@
                 const container = document.getElementById('car-list');
                 data.forEach(car => {
                     const imgUrl = car.image_url.startsWith('http') ? car.image_url : `${API_URL}${car.image_url}`;
+                    
+                    // Improved Card Design
                     container.innerHTML += `
-                        <div class="card">
-                            <img src="${imgUrl}" alt="${car.brand}">
-                            <div class="card-body">
-                                <h3>${car.year} ${car.brand} ${car.model}</h3>
-                                <p class="price">$${car.price.toLocaleString()}</p>
-                                <a href="detail.html?id=${car.id}" class="btn">View Details</a>
+                        <a href="detail.html?id=${car.id}" class="card">
+                            <div class="card-img-wrapper">
+                                <img src="${imgUrl}" alt="${car.brand}">
                             </div>
-                        </div>
+                            <div class="card-body">
+                                <h3 class="card-title">${car.brand} ${car.model}</h3>
+                                
+                                <div class="specs-row">
+                                    <span class="spec-badge"><i class="fa-solid fa-calendar"></i> ${car.year}</span>
+                                    <span class="spec-badge"><i class="fa-solid fa-gauge"></i> ${car.mileage.toLocaleString()} km</span>
+                                </div>
+                                
+                                <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:auto;">
+                                    <p class="price">$${car.price.toLocaleString()}</p>
+                                    <span style="color:var(--primary); font-size:0.9rem; font-weight:600;">View <i class="fa-solid fa-arrow-right"></i></span>
+                                </div>
+                            </div>
+                        </a>
                     `;
                 });
             });
     </script>
 </body>
-
 </html>

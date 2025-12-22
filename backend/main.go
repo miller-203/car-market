@@ -203,17 +203,42 @@ func createCar(c *fiber.Ctx) error {
 }
 
 // Admin: Delete Car
+// Admin: Delete Car
 func deleteCar(c *fiber.Ctx) error {
-	id := c.Params("id")
-	var car Car
-	if result := DB.First(&car, id); result.Error != nil {
-		return c.Status(404).JSON(fiber.Map{"error": "Not found"})
-	}
+    id := c.Params("id")
+    var car Car
 
-	// Optional: Delete local image file here using os.Remove(car.ImageURL)
+    // 1. Find the car AND load its images so we know what to delete
+    if result := DB.Preload("Images").First(&car, id); result.Error != nil {
+        return c.Status(404).JSON(fiber.Map{"error": "Not found"})
+    }
 
-	DB.Delete(&car)
-	return c.SendStatus(204)
+    // 2. Delete the actual files from the "uploads" folder (Clean up disk)
+    if car.ImageURL != "" {
+        err := os.Remove("." + car.ImageURL) // Remove main image
+        if err != nil {
+            fmt.Println("Failed to delete main image:", err)
+        }
+    }
+
+    for _, img := range car.Images {
+        err := os.Remove("." + img.ImageURL) // Remove gallery images
+        if err != nil {
+            fmt.Println("Failed to delete gallery image:", err)
+        }
+    }
+
+    // 3. Delete the Gallery Records from Database first (Fixes the Foreign Key Error)
+    if err := DB.Where("car_id = ?", car.ID).Delete(&CarImage{}).Error; err != nil {
+         return c.Status(500).JSON(fiber.Map{"error": "Could not delete car images"})
+    }
+
+    // 4. Finally, Delete the Car
+    if err := DB.Delete(&car).Error; err != nil {
+        return c.Status(500).JSON(fiber.Map{"error": "Could not delete car"})
+    }
+
+    return c.SendStatus(204)
 }
 
 // Setup Admin (Run once manually via code or SQL to create user)
