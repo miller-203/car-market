@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard | Al Watani</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <style>
-        body { background-color: #f8fafc; }
-        
+        body {
+            background-color: #f8fafc;
+        }
+
         /* Dashboard Header */
         .dashboard-header {
-            background: var(--white);
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
@@ -21,6 +23,7 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            /* background-color: ; */
         }
 
         /* Top Action Bar */
@@ -33,14 +36,16 @@
 
         /* Modal (Popup) Styles */
         .modal {
-            display: none; /* Hidden by default */
+            display: none;
+            /* Hidden by default */
             position: fixed;
             z-index: 2000;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+            background-color: rgba(0, 0, 0, 0.6);
+            /* Black w/ opacity */
             backdrop-filter: blur(5px);
             align-items: center;
             justify-content: center;
@@ -78,21 +83,27 @@
             cursor: pointer;
             transition: color 0.2s;
         }
-        .close-btn:hover { color: var(--danger); }
+
+        .close-btn:hover {
+            color: var(--danger);
+        }
 
         /* Rich Admin Card */
         .admin-card {
             background: white;
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             transition: transform 0.2s;
             border: 1px solid #e2e8f0;
             display: flex;
             flex-direction: column;
         }
-        
-        .admin-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+
+        .admin-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
 
         .admin-card-img {
             height: 200px;
@@ -100,8 +111,11 @@
             object-fit: cover;
         }
 
-        .admin-card-body { padding: 15px; flex-grow: 1; }
-        
+        .admin-card-body {
+            padding: 15px;
+            flex-grow: 1;
+        }
+
         .admin-stats {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -122,14 +136,16 @@
         }
     </style>
 </head>
+
 <body>
 
     <header class="dashboard-header">
         <div style="display: flex; align-items: center; gap: 10px;">
             <i class="fa-solid fa-gauge-high" style="color:var(--primary); font-size: 1.2rem;"></i>
-            <span style="font-weight: 700; font-size: 1.2rem; color: var(--dark);">Admin Panel</span>
+            <span style="font-weight: 700; font-size: 1.2rem; color: var(--white);">Admin Panel</span>
         </div>
-        <button onclick="logout()" class="btn btn-outline" style="color: var(--danger); border-color: #fecaca; font-size: 0.9rem; padding: 8px 15px;">
+        <button onclick="logout()" class="btn btn-outline"
+            style="color: var(--danger); border-color: #fecaca; font-size: 0.9rem; padding: 8px 15px;">
             <i class="fa-solid fa-power-off"></i> Logout
         </button>
     </header>
@@ -140,20 +156,21 @@
                 <h1 style="font-size: 2rem; margin-bottom: 5px;">Inventory</h1>
                 <p style="color: #64748b;">Manage your vehicle listings.</p>
             </div>
-            <button onclick="openModal()" class="btn" style="padding: 12px 25px; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3);">
+            <button onclick="openModal()" class="btn"
+                style="padding: 12px 25px; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3);">
                 <i class="fa-solid fa-plus"></i> &nbsp;Add New Car
             </button>
         </div>
 
         <div id="admin-list" class="card-grid">
-            </div>
+        </div>
     </div>
 
     <div id="car-modal" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal()">&times;</span>
             <h2 style="margin-bottom: 25px;">Create New Listing</h2>
-            
+
             <form id="add-car-form">
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <div>
@@ -199,6 +216,9 @@
             </form>
         </div>
     </div>
+    <footer>
+        <p>&copy; 2023 Al Watani. All rights reserved.</p>
+    </footer>
 
     <script src="app.js"></script>
     <script>
@@ -218,7 +238,7 @@
         }
 
         // Close if clicked outside
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             if (event.target == modal) closeModal();
         }
 
@@ -264,14 +284,71 @@
         }
 
         // --- Add Car Logic ---
+        function showError(inputName, message) {
+            const input = document.querySelector(`[name="${inputName}"]`);
+            if (input) {
+                input.classList.add('error');
+                // Create or find existing error message
+                let msg = input.parentElement.querySelector('.error-msg');
+                if (!msg) {
+                    msg = document.createElement('div');
+                    msg.className = 'error-msg';
+                    input.parentElement.appendChild(msg);
+                }
+                msg.innerText = message;
+                msg.style.display = 'block';
+            }
+        }
+
+        // 2. Clear all errors
+        function clearErrors() {
+            document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+            document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none');
+        }
+
+        // 3. Robust Add Car Logic
         document.getElementById('add-car-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = e.target.querySelector('button[type="submit"]');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = 'Uploading...';
-            btn.disabled = true;
+            clearErrors();
 
             const formData = new FormData(e.target);
+            const brand = formData.get('brand').trim();
+            const model = formData.get('model').trim();
+            const year = parseInt(formData.get('year'));
+            const price = parseInt(formData.get('price'));
+            const mileage = parseInt(formData.get('mileage'));
+            const files = document.querySelector('[name="images"]').files;
+
+            let isValid = true;
+
+            // --- Validation Checks ---
+            if (!brand) { showError('brand', 'Brand is required'); isValid = false; }
+            if (!model) { showError('model', 'Model is required'); isValid = false; }
+
+            const currentYear = new Date().getFullYear();
+            if (!year || year < 1900 || year > currentYear + 1) {
+                showError('year', `Enter valid year (1900-${currentYear + 1})`);
+                isValid = false;
+            }
+
+            if (!price || price < 0) { showError('price', 'Price cannot be negative'); isValid = false; }
+            if (mileage < 0) { showError('mileage', 'Mileage cannot be negative'); isValid = false; }
+
+            if (files.length === 0) {
+                // Find the file input wrapper to show error
+                const fileInput = document.querySelector('[name="images"]');
+                fileInput.classList.add('error');
+                alert("⚠️ Please select at least one photo.");
+                isValid = false;
+            }
+
+            if (!isValid) return; // Stop if errors exist
+
+            // --- Sending Data ---
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading...';
+            btn.disabled = true;
 
             try {
                 const res = await fetch(`${API_URL}/admin/cars`, {
@@ -287,29 +364,27 @@
                     alert("Car added successfully!");
                 } else {
                     const data = await res.json();
-                    alert('Error: ' + data.error);
+                    alert('Server Error: ' + data.error);
                 }
             } catch (error) {
-                alert('Server Error');
+                alert('Connection Failed. Is the server running?');
             } finally {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             }
         });
 
-        // --- Delete Logic ---
-        async function deleteCar(id) {
-            if (!confirm("Are you sure?")) return;
-            try {
-                await fetch(`${API_URL}/admin/cars/${id}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${getToken()}` }
-                });
-                loadCars();
-            } catch (err) { alert("Error"); }
-        }
+        // Remove errors when typing
+        document.querySelectorAll('input, textarea').forEach(input => {
+            input.addEventListener('input', () => {
+                input.classList.remove('error');
+                const msg = input.parentElement.querySelector('.error-msg');
+                if (msg) msg.style.display = 'none';
+            });
+        });
 
         loadCars();
     </script>
 </body>
+
 </html>

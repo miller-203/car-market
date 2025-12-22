@@ -359,3 +359,33 @@ footer {
 .next-btn {
     right: 10px;
 }
+
+/* --- Error Handling Styles --- */
+.input-group input.error,
+.form-group input.error,
+.form-group textarea.error {
+    border-color: var(--danger) !important;
+    background-color: #fef2f2 !important; /* Light red bg */
+    animation: shake 0.3s ease-in-out;
+}
+
+.error-msg {
+    color: var(--danger);
+    font-size: 0.85rem;
+    margin-top: 5px;
+    display: none; /* Hidden by default */
+    font-weight: 500;
+}
+
+.input-group.error .error-msg,
+.form-group.error .error-msg {
+    display: block;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+}
