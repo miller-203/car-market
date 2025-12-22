@@ -2,7 +2,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
 
 :root {
-    --primary: #2563eb;       /* Modern Blue */
+    --primary: #2563eb;
+    /* Modern Blue */
     --primary-dark: #1d4ed8;
     --dark: #1e293b;
     --light: #f3f4f6;
@@ -20,6 +21,8 @@ body {
     line-height: 1.6;
 }
 
+
+
 /* --- Navbar --- */
 header {
     background: var(--dark);
@@ -28,19 +31,29 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     position: sticky;
     top: 0;
     z-index: 1000;
 }
 
-header h1 {
-    margin: 0;
-    font-size: 1.5rem;
+.logo {
+    color: var(--white);
+    text-decoration: none;
+    font-family: 'Brush Script MT', 'Comic Sans MS', cursive;
     font-weight: 600;
-    display: flex;
-    align-items: center;
+    font-style: italic;
+    font-size: 1.5rem;
     gap: 10px;
+    font-family: 'Great Vibes', cursive;
+    margin: 0;
+}
+
+header h1 {
+    /* margin: 0;
+    gap: 10px; */
+    /* font-family: ; */
+    padding-bottom: 3px;
 }
 
 header nav a {
@@ -147,10 +160,22 @@ header nav a:hover {
     transition: background 0.3s;
 }
 
-.btn:hover { background: var(--primary-dark); }
-.btn-danger { background: var(--danger); }
-.btn-danger:hover { background: #dc2626; }
-.btn-block { display: block; width: 100%; }
+.btn:hover {
+    background: var(--primary-dark);
+}
+
+.btn-danger {
+    background: var(--danger);
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+}
+
+.btn-block {
+    display: block;
+    width: 100%;
+}
 
 /* --- Forms (Admin) --- */
 .form-box {
@@ -162,7 +187,9 @@ header nav a:hover {
     margin: 0 auto 40px auto;
 }
 
-.form-group { margin-bottom: 20px; }
+.form-group {
+    margin-bottom: 20px;
+}
 
 .form-group label {
     display: block;
@@ -171,18 +198,22 @@ header nav a:hover {
 }
 
 
-input, textarea, select {
+input,
+textarea,
+select {
     width: 100%;
     padding: 12px;
     border: 2px solid #e5e7eb;
     border-radius: 8px;
     font-family: inherit;
     font-size: 1rem;
-    box-sizing: border-box; /* Fixes padding issues */
+    box-sizing: border-box;
+    /* Fixes padding issues */
     transition: border-color 0.3s;
 }
 
-input:focus, textarea:focus {
+input:focus,
+textarea:focus {
     outline: none;
     border-color: var(--primary);
 }
@@ -194,13 +225,16 @@ input:focus, textarea:focus {
     margin-bottom: 20px;
     border-radius: 12px;
     overflow: hidden;
-    background: #000; /* Black background for photos */
+    background: #000;
+    /* Black background for photos */
 }
 
 .slider-img {
     width: 100%;
-    height: 500px; /* Fixed height for consistency */
-    object-fit: contain; /* Keeps entire image visible */
+    height: 500px;
+    /* Fixed height for consistency */
+    object-fit: contain;
+    /* Keeps entire image visible */
     display: block;
 }
 
@@ -223,8 +257,13 @@ input:focus, textarea:focus {
     background-color: rgba(0, 0, 0, 0.8);
 }
 
-.prev-btn { left: 10px; }
-.next-btn { right: 10px; }
+.prev-btn {
+    left: 10px;
+}
+
+.next-btn {
+    right: 10px;
+}
 
 /* Dashboard Image Fix */
 .dashboard-img {

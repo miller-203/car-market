@@ -1,15 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+
 </head>
+
 <body>
     <header>
-        <h1><i class="fa-solid fa-gauge"></i> Admin Dashboard</h1>
+                <a class="logo" href="index.html">Al Watani</a>
+
         <nav>
             <a href="index.html" target="_blank"><i class="fa-solid fa-eye"></i> View Site</a>
             <button onclick="logout()" class="btn btn-danger" style="margin-left: 15px;">
@@ -65,7 +70,7 @@
         <hr style="border: 0; border-top: 1px solid #ddd; margin: 40px 0;">
 
         <h3 style="margin-bottom: 20px;"><i class="fa-solid fa-list"></i> Current Inventory</h3>
-        
+
         <div id="admin-list" class="card-grid"></div>
     </div>
 
@@ -83,7 +88,7 @@
 
                 cars.forEach(car => {
                     const imgUrl = car.image_url.startsWith('http') ? car.image_url : `${API_URL}${car.image_url}`;
-                    
+
                     // Same card layout as index.html, but with Delete button
                     container.innerHTML += `
                         <div class="card">
@@ -124,8 +129,8 @@
 
                 if (res.ok) {
                     alert('Car Added Successfully!');
-                    e.target.reset(); 
-                    loadCars();       
+                    e.target.reset();
+                    loadCars();
                 } else {
                     const data = await res.json();
                     alert('Failed: ' + (data.error || 'Unknown error'));
@@ -142,7 +147,7 @@
         // Delete Car Logic
         async function deleteCar(id) {
             if (!confirm("Are you sure you want to delete this car? This action cannot be undone.")) return;
-            
+
             try {
                 const res = await fetch(`${API_URL}/admin/cars/${id}`, {
                     method: 'DELETE',
@@ -162,4 +167,5 @@
         loadCars();
     </script>
 </body>
+
 </html>
