@@ -89,7 +89,11 @@
             userInfo.style.display = 'none';
             const adminInfo = document.createElement('nav');
             adminInfo.innerHTML = `
-                <a href="/">Home</a>
+                <nav>
+                    <a href="/">Home</a>
+                    <a href="https://maps.app.goo.gl/53EEvV7wZupX5ht47" target="_blank">Location</a>
+                    <a href="#contact">Contacts</a>
+                </nav>
             `;
             document.querySelector('header').insertBefore(adminInfo, navContainer);
 
