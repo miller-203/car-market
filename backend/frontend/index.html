@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
     <header>
         <a class="logo" href="/">Al Watani</a>
@@ -40,14 +42,52 @@
 
     <script src="app.js"></script>
     <script>
+        const token = getToken();
+
+        // --- 1. HANDLE HEADER LOGIC (Run this ONCE, outside the loop) ---
+        if (token) {
+            // Hide the Admin Login button (assumes it's the first .btn in header)
+            // Better to give the login button an ID in HTML, but this works if structure is static
+            const loginBtn = document.querySelector('header .btn'); 
+            if(loginBtn) loginBtn.style.display = 'none';
+
+            // Create Dashboard Button
+            const dashboardBtn = document.createElement('a');
+            dashboardBtn.href = 'dashboard.html';
+            dashboardBtn.className = 'btn';
+            dashboardBtn.style.marginLeft = '20px';
+            dashboardBtn.style.background = 'var(--primary)';
+            dashboardBtn.style.border = 'none';
+            dashboardBtn.style.borderRadius = '50px';
+            dashboardBtn.style.padding = '8px 10px';
+            dashboardBtn.innerHTML = '<i class="fa-solid fa-gauge-high"></i> Dashboard';
+            const nav = document.createElement('nav');
+            const logoutBtn = document.createElement('button');
+            logoutBtn.className = 'btn';
+            logoutBtn.style.marginLeft = '10px';
+            logoutBtn.style.background = 'transparent';
+            logoutBtn.style.border = '2px solid #fee2e2';
+            logoutBtn.style.borderRadius = '50px';
+            logoutBtn.style.color = 'var(--danger)';
+            logoutBtn.innerHTML = '<i class="fa-solid fa-power-off"></i> Logout';
+            logoutBtn.onclick = logout;
+            nav.appendChild(dashboardBtn);
+            nav.appendChild(logoutBtn);
+            
+            // Append to nav or header
+            document.querySelector('header').appendChild(nav);
+        }
+
+        // --- 2. FETCH AND DISPLAY CARS ---
         fetch(`${API_URL}/cars`)
             .then(res => res.json())
             .then(data => {
                 const container = document.getElementById('car-list');
+                
+                // Only loop for creating cards
                 data.forEach(car => {
                     const imgUrl = car.image_url.startsWith('http') ? car.image_url : `${API_URL}${car.image_url}`;
-                    
-                    // Improved Card Design
+
                     container.innerHTML += `
                         <a href="detail.html?id=${car.id}" class="card">
                             <div class="card-img-wrapper">
@@ -72,4 +112,5 @@
             });
     </script>
 </body>
+
 </html>
