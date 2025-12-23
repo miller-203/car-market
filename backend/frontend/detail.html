@@ -16,6 +16,10 @@
             <a class="logo" href="/">Al Watani</a>
         </div>
 
+        <nav class="info" style="display: flex; align-items: center; gap: 15px;">
+                <a href="/">Home</a>
+                <a href="https://maps.app.goo.gl/53EEvV7wZupX5ht47" target="_blank">Locations</a>
+        </nav>
         <nav id="nav-links" style="display: flex; align-items: center; gap: 15px;">
         </nav>
     </header>
@@ -49,8 +53,16 @@
         // --- 1. HEADER LOGIC ---
         const navContainer = document.getElementById('nav-links');
         if (token) {
+            const userInfo = document.querySelector('header .info');
+            userInfo.style.display = 'none';
+            const adminInfo = document.createElement('nav');
+            adminInfo.innerHTML = `
+                <a href="/">Home</a>
+            `;
+            document.querySelector('header').insertBefore(adminInfo, navContainer);
+            
             navContainer.innerHTML = `
-            <a href="dashboard.html" class="btn" style="background: var(--primary); color: white; padding: 10px 20px; border-radius: 50px; font-size: 0.9rem;">
+            <a href="dashboard.html" class="btn" style="background: var(--primary); color: white; padding: 10px 20px; border-radius: 50px; font-size: 0.9rem; padding: 8px 10px;">
                 <i class="fa-solid fa-gauge-high"></i> &nbsp;Dashboard
             </a>
             <button onclick="logout()" class="btn" style="background: transparent; border: 2px solid #fee2e2; color: var(--danger); padding: 8px 20px; border-radius: 50px; font-size: 0.9rem; margin-left: 10px;">
@@ -59,7 +71,6 @@
         `;
         } else {
             navContainer.innerHTML = `
-            <a href="/">Home</a>
             <a href="login.html" class="btn btn-outline" style="border-radius: 50px; padding: 8px 20px; font-size: 0.9rem;">
                 <i class="fa-solid fa-user"></i> &nbsp;Login
             </a>
