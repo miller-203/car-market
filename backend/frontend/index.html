@@ -1,12 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Al Watani | Premium Car Market</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Card Slider Styles */
+        .card-img-wrapper { position: relative; }
+        
+        .card-slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.6);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            z-index: 10;
+            opacity: 0; /* Hidden by default */
+            transition: opacity 0.2s;
+        }
+        
+        /* Show buttons only when hovering the card */
+        .card:hover .card-slider-btn { opacity: 1; }
+        
+        .card-prev { left: 10px; }
+        .card-next { right: 10px; }
+        .card-slider-btn:hover { background: rgba(0,0,0,0.9); }
+    </style>
 </head>
 
 <body>
@@ -18,7 +48,7 @@
             <a href="#contact">Contacts</a>
         </nav>
         <a href="login.html" class="btn" style="margin-left: 20px; background:transparent; border:1px solid #ffffff33;">
-            <i class="fa-solid fa-lock"></i> &nbsp;Admin
+            <i class="fa-solid fa-lock"></i>  Admin
         </a>
     </header>
 
@@ -38,44 +68,30 @@
     </div>
 
     <footer id="contact">
-        <div class="container"
-            style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px; text-align: left;">
-
+        <div class="container" style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px; text-align: left;">
             <div>
                 <span class="logo" style="font-size: 1.8rem;">Al Watani</span>
                 <p style="color: #94a3b8; max-width: 300px; margin-top: 10px;">
                     Morocco's premium destination for luxury and performance vehicles.
                 </p>
             </div>
-
             <div>
                 <h4 style="color: white; margin-bottom: 15px;">Contact Us</h4>
-                <p style="color: #cbd5e1; margin-bottom: 8px;">
-                    <i class="fa-solid fa-phone" style="color: var(--primary);"></i> &nbsp;+212 600 000 000
-                </p>
-                <p style="color: #cbd5e1; margin-bottom: 8px;">
-                    <i class="fa-solid fa-envelope" style="color: var(--primary);"></i> &nbsp;contact@alwatani.ma
-                </p>
-                <p style="color: #cbd5e1;">
-                    <i class="fa-solid fa-location-dot" style="color: var(--primary);"></i> &nbsp;Fes, Morocco
-                </p>
+                <p style="color: #cbd5e1; margin-bottom: 8px;"><i class="fa-solid fa-phone" style="color: var(--primary);"></i>  +212 661 360 143</p>
+                <p style="color: #cbd5e1; margin-bottom: 8px;"><i class="fa-solid fa-envelope" style="color: var(--primary);"></i>  contact@alwatani.ma</p>
+                <p style="color: #cbd5e1;"><i class="fa-solid fa-location-dot" style="color: var(--primary);"></i>  Oujda, Morocco</p>
             </div>
-
             <div>
                 <h4 style="color: white; margin-bottom: 15px;">Follow Us</h4>
                 <div style="display: flex; gap: 15px;">
-                    <a href="#" style="color: #94a3b8; transition: 0.2s;"><i
-                            class="fa-brands fa-facebook fa-xl"></i></a>
-                    <a href="#" style="color: #94a3b8; transition: 0.2s;"><i
-                            class="fa-brands fa-instagram fa-xl"></i></a>
-                    <a href="#" style="color: #94a3b8; transition: 0.2s;"><i
-                            class="fa-brands fa-whatsapp fa-xl"></i></a>
+                    <a href="#" style="color: #94a3b8;"><i class="fa-brands fa-facebook fa-xl"></i></a>
+                    <a href="#" style="color: #94a3b8;"><i class="fa-brands fa-instagram fa-xl"></i></a>
+                    <a href="#" style="color: #94a3b8;"><i class="fa-brands fa-whatsapp fa-xl"></i></a>
                 </div>
             </div>
         </div>
-
         <div style="border-top: 1px solid #334155; margin-top: 30px; padding-top: 20px; text-align: center;">
-            <p style="color: #64748b; font-size: 0.9rem;">&copy; 2025 Al Watani Motors. All rights reserved.</p>
+            <p style="color: #64748b; font-size: 0.9rem;">© 2025 Al Watani Motors. All rights reserved.</p>
         </div>
     </footer>
 
@@ -83,54 +99,56 @@
     <script>
         const token = getToken();
 
-        // --- 1. HANDLE HEADER LOGIC (Run this ONCE, outside the loop) ---
+        // 1. HEADER LOGIC
         if (token) {
-            // Hide the Admin Login button (assumes it's the first .btn in header)
-            // Better to give the login button an ID in HTML, but this works if structure is static
             const loginBtn = document.querySelector('header .btn');
             if (loginBtn) loginBtn.style.display = 'none';
 
-            // Create Dashboard Button
-            const dashboardBtn = document.createElement('a');
-            dashboardBtn.href = 'dashboard.html';
-            dashboardBtn.className = 'btn';
-            dashboardBtn.style.marginLeft = '20px';
-            dashboardBtn.style.background = 'var(--primary)';
-            dashboardBtn.style.border = 'none';
-            dashboardBtn.style.borderRadius = '50px';
-            dashboardBtn.style.padding = '8px 10px';
-            dashboardBtn.innerHTML = '<i class="fa-solid fa-gauge-high"></i> Dashboard';
-            const nav = document.createElement('nav');
-            const logoutBtn = document.createElement('button');
-            logoutBtn.className = 'btn';
-            logoutBtn.style.marginLeft = '10px';
-            logoutBtn.style.background = 'transparent';
-            logoutBtn.style.border = '2px solid #fee2e2';
-            logoutBtn.style.borderRadius = '50px';
-            logoutBtn.style.color = 'var(--danger)';
-            logoutBtn.innerHTML = '<i class="fa-solid fa-power-off"></i> Logout';
-            logoutBtn.onclick = logout;
-            nav.appendChild(dashboardBtn);
-            nav.appendChild(logoutBtn);
-
-            // Append to nav or header
-            document.querySelector('header').appendChild(nav);
+            const navDiv = document.createElement('div');
+            navDiv.style.display = "flex";
+            navDiv.style.alignItems = "center";
+            
+            navDiv.innerHTML = `
+                <a href="dashboard.html" class="btn" style="margin-left:20px; background:var(--primary); border:none; border-radius:50px; padding:8px 15px;">
+                    <i class="fa-solid fa-gauge-high"></i> Dashboard
+                </a>
+                <button onclick="logout()" class="btn" style="margin-left:10px; background:transparent; border:2px solid #fee2e2; border-radius:50px; color:var(--danger); padding:6px 15px;">
+                    <i class="fa-solid fa-power-off"></i> Logout
+                </button>
+            `;
+            document.querySelector('header').appendChild(navDiv);
         }
 
-        // --- 2. FETCH AND DISPLAY CARS ---
+        // 2. FETCH CARS
         fetch(`${API_URL}/cars`)
             .then(res => res.json())
             .then(data => {
                 const container = document.getElementById('car-list');
 
-                // Only loop for creating cards
-                data.forEach(car => {
-                    const imgUrl = car.image_url.startsWith('http') ? car.image_url : `${API_URL}${car.image_url}`;
+                data.forEach((car, index) => {
+                    // Check if multiple images exist
+                    const hasMultipleImages = car.images && car.images.length > 1;
+                    
+                    // Prepare image list string for JS use
+                    // We store images as a data attribute to access them later
+                    const imageList = hasMultipleImages ? JSON.stringify(car.images.map(img => img.image_url)) : '[]';
+                    const initialImg = car.image_url.startsWith('http') ? car.image_url : `${API_URL}${car.image_url}`;
+
+                    // Conditional Buttons HTML
+                    const buttonsHtml = hasMultipleImages ? `
+                        <button class="card-slider-btn card-prev" onclick="slideCard(event, ${car.id}, -1)">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+                        <button class="card-slider-btn card-next" onclick="slideCard(event, ${car.id}, 1)">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    ` : '';
 
                     container.innerHTML += `
-                        <a href="detail.html?id=${car.id}" class="card">
+                        <a href="detail.html?id=${car.id}" class="card" id="card-${car.id}" data-current-index="0" data-images='${imageList}'>
                             <div class="card-img-wrapper">
-                                <img src="${imgUrl}" alt="${car.brand}">
+                                ${buttonsHtml}
+                                <img src="${initialImg}" alt="${car.brand}" id="img-${car.id}">
                             </div>
                             <div class="card-body">
                                 <h3 class="card-title">${car.brand} ${car.model}</h3>
@@ -149,7 +167,33 @@
                     `;
                 });
             });
+
+        // 3. SLIDER FUNCTION (Global)
+        function slideCard(event, carId, direction) {
+            // Prevent clicking the link
+            event.preventDefault(); 
+            event.stopPropagation();
+
+            const card = document.getElementById(`card-${carId}`);
+            const imgElement = document.getElementById(`img-${carId}`);
+            
+            // Get Data
+            let currentIndex = parseInt(card.getAttribute('data-current-index'));
+            const images = JSON.parse(card.getAttribute('data-images'));
+
+            // Calculate New Index
+            currentIndex += direction;
+            if (currentIndex >= images.length) currentIndex = 0;
+            else if (currentIndex < 0) currentIndex = images.length - 1;
+
+            // Update State
+            card.setAttribute('data-current-index', currentIndex);
+            
+            // Update Image
+            let newPath = images[currentIndex];
+            if (!newPath.startsWith('http')) newPath = `${API_URL}${newPath}`;
+            imgElement.src = newPath;
+        }
     </script>
 </body>
-
 </html>

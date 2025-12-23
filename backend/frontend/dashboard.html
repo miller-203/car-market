@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard | Al Watani</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <style>
-        body { background-color: #f8fafc; }
-        
+        body {
+            background-color: #f8fafc;
+        }
+
         /* Dashboard Header */
         .dashboard-header {
             background: white;
@@ -23,7 +26,6 @@
             z-index: 100;
         }
 
-        /* Top Action Bar */
         .action-bar {
             display: flex;
             justify-content: space-between;
@@ -31,7 +33,6 @@
             margin: 40px 0 30px 0;
         }
 
-        /* Modal (Popup) Styles */
         .modal {
             display: none;
             position: fixed;
@@ -40,7 +41,7 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.6);
+            background-color: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(5px);
             align-items: center;
             justify-content: center;
@@ -48,7 +49,10 @@
             transition: opacity 0.3s ease;
         }
 
-        .modal.show { display: flex; opacity: 1; }
+        .modal.show {
+            display: flex;
+            opacity: 1;
+        }
 
         .modal-content {
             background-color: #fff;
@@ -64,7 +68,9 @@
             transition: transform 0.3s ease;
         }
 
-        .modal.show .modal-content { transform: scale(1); }
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
 
         .close-btn {
             position: absolute;
@@ -75,30 +81,32 @@
             cursor: pointer;
             transition: color 0.2s;
         }
-        .close-btn:hover { color: var(--danger); }
 
-        /* Rich Admin Card */
+        .close-btn:hover {
+            color: var(--danger);
+        }
+
         .admin-card {
             background: white;
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             transition: transform 0.2s;
             border: 1px solid #e2e8f0;
             display: flex;
             flex-direction: column;
         }
-        
-        .admin-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
 
-        .admin-card-img {
-            height: 200px;
-            width: 100%;
-            object-fit: cover;
+        .admin-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
-        .admin-card-body { padding: 15px; flex-grow: 1; }
-        
+        .admin-card-body {
+            padding: 15px;
+            flex-grow: 1;
+        }
+
         .admin-stats {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -118,7 +126,6 @@
             gap: 10px;
         }
 
-        /* --- SMART UPLOAD STYLES --- */
         .upload-area {
             border: 2px dashed #cbd5e1;
             background: #f8fafc;
@@ -128,15 +135,19 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
-        .upload-area:hover { border-color: var(--primary); background: #eff6ff; }
-        
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: #eff6ff;
+        }
+
         .image-preview-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
             gap: 10px;
             margin-top: 15px;
         }
-        
+
         .preview-card {
             position: relative;
             height: 80px;
@@ -144,9 +155,13 @@
             overflow: hidden;
             border: 1px solid #e2e8f0;
         }
-        
-        .preview-card img { width: 100%; height: 100%; object-fit: cover; }
-        
+
+        .preview-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
         .remove-img-btn {
             position: absolute;
             top: 2px;
@@ -164,7 +179,6 @@
             justify-content: center;
         }
 
-        /* --- TOAST NOTIFICATION STYLES (Bottom Right) --- */
         #toast-container {
             position: fixed;
             bottom: 30px;
@@ -190,21 +204,87 @@
             transform: translateX(100%);
         }
 
-        .toast.success { border-color: #10b981; }
-        .toast.success i { color: #10b981; }
-        
-        .toast.error { border-color: #ef4444; }
-        .toast.error i { color: #ef4444; }
+        .toast.success {
+            border-color: #10b981;
+        }
+
+        .toast.success i {
+            color: #10b981;
+        }
+
+        .toast.error {
+            border-color: #ef4444;
+        }
+
+        .toast.error i {
+            color: #ef4444;
+        }
 
         @keyframes slideIn {
-            to { opacity: 1; transform: translateX(0); }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
-        
+
         @keyframes fadeOut {
-            to { opacity: 0; transform: translateX(100%); }
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
+
+        /* --- NEW SLIDER STYLES FOR DASHBOARD --- */
+        .admin-card-img-wrapper {
+            position: relative;
+            height: 200px;
+            /* Fixed height for dashboard */
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .admin-card-img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .card-slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            z-index: 10;
+            opacity: 0.8;
+            /* Always visible on dashboard */
+            transition: all 0.2s;
+        }
+
+        .card-slider-btn:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .card-prev {
+            left: 5px;
+        }
+
+        .card-next {
+            right: 5px;
         }
     </style>
 </head>
+
 <body>
 
     <header>
@@ -226,8 +306,9 @@
                 <h1 style="font-size: 2rem; margin-bottom: 5px;">Inventory</h1>
                 <p style="color: #64748b;">Manage your vehicle listings.</p>
             </div>
-            <button onclick="openModal()" class="btn" style="padding: 12px 25px; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3);">
-                <i class="fa-solid fa-plus"></i> &nbsp;Add New Car
+            <button onclick="openModal()" class="btn"
+                style="padding: 12px 25px; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3);">
+                <i class="fa-solid fa-plus"></i>  Add New Car
             </button>
         </div>
 
@@ -238,98 +319,67 @@
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal()">&times;</span>
             <h2 style="margin-bottom: 25px;">Create New Listing</h2>
-            
+
             <form id="add-car-form">
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div>
-                        <label style="font-size:0.9rem; font-weight:600;">Brand</label>
-                        <input type="text" name="brand" placeholder="BMW" required>
-                    </div>
-                    <div>
-                        <label style="font-size:0.9rem; font-weight:600;">Model</label>
-                        <input type="text" name="model" placeholder="X5" required>
-                    </div>
+                    <div><label style="font-size:0.9rem; font-weight:600;">Brand</label><input type="text" name="brand"
+                            placeholder="BMW" required></div>
+                    <div><label style="font-size:0.9rem; font-weight:600;">Model</label><input type="text" name="model"
+                            placeholder="X5" required></div>
                 </div>
-
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
-                    <div>
-                        <label style="font-size:0.9rem; font-weight:600;">Year</label>
-                        <input type="number" name="year" placeholder="2023" required>
-                    </div>
-                    <div>
-                        <label style="font-size:0.9rem; font-weight:600;">Mileage (km)</label>
-                        <input type="number" name="mileage" placeholder="50000" required>
-                    </div>
+                    <div><label style="font-size:0.9rem; font-weight:600;">Year</label><input type="number" name="year"
+                            placeholder="2023" required></div>
+                    <div><label style="font-size:0.9rem; font-weight:600;">Mileage (km)</label><input type="number"
+                            name="mileage" placeholder="50000" required></div>
                 </div>
-
-                <div style="margin-top: 15px;">
-                    <label style="font-size:0.9rem; font-weight:600;">Price ($)</label>
-                    <input type="number" name="price" placeholder="Price" required>
-                </div>
-
-                <div style="margin-top: 15px;">
-                    <label style="font-size:0.9rem; font-weight:600;">Description</label>
-                    <textarea name="description" rows="3" placeholder="Car details..."></textarea>
-                </div>
+                <div style="margin-top: 15px;"><label style="font-size:0.9rem; font-weight:600;">Price ($)</label><input
+                        type="number" name="price" placeholder="Price" required></div>
+                <div style="margin-top: 15px;"><label
+                        style="font-size:0.9rem; font-weight:600;">Description</label><textarea name="description"
+                        rows="3" placeholder="Car details..."></textarea></div>
 
                 <div style="margin-top: 15px;">
                     <label style="font-size:0.9rem; font-weight:600; display:block; margin-bottom:5px;">Images</label>
-                    
                     <div class="upload-area" id="drop-zone">
                         <i class="fa-solid fa-cloud-arrow-up" style="font-size: 1.5rem; color: #94a3b8;"></i>
                         <p style="font-size:0.9rem; color:#64748b; margin: 5px 0 0 0;">Click to add photos</p>
                         <input type="file" id="file-input" multiple style="display:none;" accept="image/*">
                     </div>
-
                     <div id="preview-container" class="image-preview-container"></div>
                 </div>
 
-                <button type="submit" class="btn btn-block" style="margin-top: 25px; padding: 15px;">
-                    Publish Car
-                </button>
+                <button type="submit" class="btn btn-block" style="margin-top: 25px; padding: 15px;">Publish
+                    Car</button>
             </form>
         </div>
     </div>
-    
-    <footer id="contact">
-        <div class="container"
-            style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px; text-align: left;">
 
+    <footer id="contact">
+        <div class="container" style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px; text-align: left;">
             <div>
                 <span class="logo" style="font-size: 1.8rem;">Al Watani</span>
                 <p style="color: #94a3b8; max-width: 300px; margin-top: 10px;">
                     Morocco's premium destination for luxury and performance vehicles.
                 </p>
             </div>
-
             <div>
                 <h4 style="color: white; margin-bottom: 15px;">Contact Us</h4>
-                <p style="color: #cbd5e1; margin-bottom: 8px;">
-                    <i class="fa-solid fa-phone" style="color: var(--primary);"></i> &nbsp;+212 600 000 000
-                </p>
-                <p style="color: #cbd5e1; margin-bottom: 8px;">
-                    <i class="fa-solid fa-envelope" style="color: var(--primary);"></i> &nbsp;contact@alwatani.ma
-                </p>
-                <p style="color: #cbd5e1;">
-                    <i class="fa-solid fa-location-dot" style="color: var(--primary);"></i> &nbsp;Fes, Morocco
-                </p>
+                <p style="color: #cbd5e1; margin-bottom: 8px;"><i class="fa-solid fa-phone" style="color: var(--primary);"></i>  +212 661 360 143</p>
+                <p style="color: #cbd5e1; margin-bottom: 8px;"><i class="fa-solid fa-envelope" style="color: var(--primary);"></i>  contact@alwatani.ma</p>
+                <p style="color: #cbd5e1;"><i class="fa-solid fa-location-dot" style="color: var(--primary);"></i>  Oujda, Morocco</p>
             </div>
-
             <div>
                 <h4 style="color: white; margin-bottom: 15px;">Follow Us</h4>
                 <div style="display: flex; gap: 15px;">
-                    <a href="#" style="color: #94a3b8; transition: 0.2s;"><i
-                            class="fa-brands fa-facebook fa-xl"></i></a>
-                    <a href="#" style="color: #94a3b8; transition: 0.2s;"><i
-                            class="fa-brands fa-instagram fa-xl"></i></a>
-                    <a href="#" style="color: #94a3b8; transition: 0.2s;"><i
-                            class="fa-brands fa-whatsapp fa-xl"></i></a>
+                    <a href="#" style="color: #94a3b8;"><i class="fa-brands fa-facebook fa-xl"></i></a>
+                    <a href="#" style="color: #94a3b8;"><i class="fa-brands fa-instagram fa-xl"></i></a>
+                    <a href="#" style="color: #94a3b8;"><i class="fa-brands fa-whatsapp fa-xl"></i></a>
                 </div>
             </div>
         </div>
-
         <div style="border-top: 1px solid #334155; margin-top: 30px; padding-top: 20px; text-align: center;">
-            <p style="color: #64748b; font-size: 0.9rem;">&copy; 2025 Al Watani Motors. All rights reserved.</p>
+            <p style="color: #64748b; font-size: 0.9rem;">© 2025 Al Watani Motors. All rights reserved.</p>
         </div>
     </footer>
 
@@ -339,97 +389,17 @@
     <script>
         if (!getToken()) window.location.href = 'login.html';
 
-        // --- Toast Notification Logic ---
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
-            
-            // Icon based on type
             const icon = type === 'success' ? 'fa-check-circle' : 'fa-circle-exclamation';
-            
-            toast.innerHTML = `
-                <i class="fa-solid ${icon}" style="font-size: 1.2rem;"></i>
-                <div style="display:flex; flex-direction:column;">
-                    <strong style="font-size:0.9rem; color:#334155;">${type === 'success' ? 'Success' : 'Error'}</strong>
-                    <span style="font-size:0.85rem; color:#64748b;">${message}</span>
-                </div>
-            `;
-            
+            toast.innerHTML = `<i class="fa-solid ${icon}" style="font-size: 1.2rem;"></i><div style="display:flex; flex-direction:column;"><strong style="font-size:0.9rem; color:#334155;">${type === 'success' ? 'Success' : 'Error'}</strong><span style="font-size:0.85rem; color:#64748b;">${message}</span></div>`;
             container.appendChild(toast);
-
-            // Remove after 3 seconds
-            setTimeout(() => {
-                toast.style.animation = 'fadeOut 0.3s ease-in forwards';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
+            setTimeout(() => { toast.style.animation = 'fadeOut 0.3s ease-in forwards'; setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
-        // --- Modal Logic ---
-        const modal = document.getElementById('car-modal');
-
-        function openModal() {
-            modal.classList.add('show');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeModal() {
-            modal.classList.remove('show');
-            document.body.style.overflow = 'auto';
-            document.getElementById('add-car-form').reset();
-            uploadedFiles = [];
-            updatePreviews();
-            clearErrors();
-        }
-
-        window.onclick = function(event) {
-            if (event.target == modal) closeModal();
-        }
-
-        // --- Smart Image Logic ---
-        let uploadedFiles = [];
-        const dropZone = document.getElementById('drop-zone');
-        const fileInput = document.getElementById('file-input');
-        const previewContainer = document.getElementById('preview-container');
-
-        dropZone.addEventListener('click', () => fileInput.click());
-
-        fileInput.addEventListener('change', () => {
-            const files = Array.from(fileInput.files);
-            files.forEach(file => {
-                if(!uploadedFiles.some(f => f.name === file.name)) {
-                    uploadedFiles.push(file);
-                }
-            });
-            updatePreviews();
-            fileInput.value = ''; 
-        });
-
-        function updatePreviews() {
-            previewContainer.innerHTML = '';
-            uploadedFiles.forEach((file, index) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = (e) => {
-                    const div = document.createElement('div');
-                    div.className = 'preview-card';
-                    div.innerHTML = `
-                        <img src="${e.target.result}" alt="Preview">
-                        <button type="button" class="remove-img-btn" onclick="removeFile(${index})">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
-                    `;
-                    previewContainer.appendChild(div);
-                };
-            });
-        }
-
-        window.removeFile = function(index) {
-            uploadedFiles.splice(index, 1);
-            updatePreviews();
-        };
-
-        // --- Load Cars ---
+        // --- LOAD CARS WITH SLIDER LOGIC ---
         async function loadCars() {
             try {
                 const res = await fetch(`${API_URL}/cars`);
@@ -438,12 +408,31 @@
                 container.innerHTML = '';
 
                 cars.forEach(car => {
-                    const imgUrl = car.image_url.startsWith('http') ? car.image_url : `${API_URL}${car.image_url}`;
+                    const initialImg = car.image_url.startsWith('http') ? car.image_url : `${API_URL}${car.image_url}`;
+
+                    // Logic for Slider Buttons
+                    const hasMultipleImages = car.images && car.images.length > 1;
+                    const imageList = hasMultipleImages ? JSON.stringify(car.images.map(img => img.image_url)) : '[]';
+
+                    const buttonsHtml = hasMultipleImages ? `
+                        <button class="card-slider-btn card-prev" onclick="slideCard(event, ${car.id}, -1)">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+                        <button class="card-slider-btn card-next" onclick="slideCard(event, ${car.id}, 1)">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    ` : '';
 
                     container.innerHTML += `
                         <div class="admin-card">
-                            <a href="detail.html?id=${car.id}" style="text-decoration: none; color: inherit; display: block;">
-                                <img src="${imgUrl}" class="admin-card-img">
+                            <a href="detail.html?id=${car.id}" style="text-decoration: none; color: inherit; display: block;" 
+                               id="card-${car.id}" data-current-index="0" data-images='${imageList}'>
+                                
+                                <div class="admin-card-img-wrapper">
+                                    ${buttonsHtml}
+                                    <img src="${initialImg}" class="admin-card-img" id="img-${car.id}">
+                                </div>
+
                                 <div class="admin-card-body">
                                     <h3 style="font-size:1.1rem; margin-bottom:5px;">${car.brand} ${car.model}</h3>
                                     <p style="color:var(--primary); font-weight:800; font-size:1.2rem;">$${car.price.toLocaleString()}</p>
@@ -455,6 +444,7 @@
                                     </div>
                                 </div>
                             </a>
+
                             <div class="admin-actions">
                                 <a href="detail.html?id=${car.id}" class="btn btn-outline" style="flex:1; border-color:#cbd5e1; color:#64748b; font-size:0.9rem; text-align:center;">
                                     <i class="fa-solid fa-eye"></i> View
@@ -471,116 +461,91 @@
             }
         }
 
+        // --- SLIDER FUNCTION ---
+        function slideCard(event, carId, direction) {
+            // Stop the link from opening detail page when clicking buttons
+            event.preventDefault();
+            event.stopPropagation();
+
+            const card = document.getElementById(`card-${carId}`);
+            const imgElement = document.getElementById(`img-${carId}`);
+
+            let currentIndex = parseInt(card.getAttribute('data-current-index'));
+            const images = JSON.parse(card.getAttribute('data-images'));
+
+            currentIndex += direction;
+            if (currentIndex >= images.length) currentIndex = 0;
+            else if (currentIndex < 0) currentIndex = images.length - 1;
+
+            card.setAttribute('data-current-index', currentIndex);
+
+            let newPath = images[currentIndex];
+            if (!newPath.startsWith('http')) newPath = `${API_URL}${newPath}`;
+            imgElement.src = newPath;
+        }
+
+        // --- Delete Logic ---
         async function deleteCar(id) {
+            if (!confirm("Are you sure?")) return;
             try {
                 await fetch(`${API_URL}/admin/cars/${id}`, {
                     method: 'DELETE',
                     headers: { 'Authorization': `Bearer ${getToken()}` }
                 });
-                showToast("Car deleted successfully", "success"); // GREEN POPUP HERE
+                showToast("Car deleted successfully", "success");
                 loadCars();
-            } catch (err) { 
+            } catch (err) {
                 showToast("Failed to delete car", "error");
             }
         }
 
-        // --- Error Helpers ---
-        function showError(inputName, message) {
-            const input = document.querySelector(`[name="${inputName}"]`);
-            if (input) {
-                input.classList.add('error');
-                let msg = input.parentElement.querySelector('.error-msg');
-                if (!msg) {
-                    msg = document.createElement('div');
-                    msg.className = 'error-msg';
-                    input.parentElement.appendChild(msg);
-                }
-                msg.innerText = message;
-                msg.style.display = 'block';
-            }
-        }
+        // --- Modal & Form Logic (Same as before) ---
+        const modal = document.getElementById('car-modal');
+        function openModal() { modal.classList.add('show'); document.body.style.overflow = 'hidden'; }
+        function closeModal() { modal.classList.remove('show'); document.body.style.overflow = 'auto'; document.getElementById('add-car-form').reset(); uploadedFiles = []; updatePreviews(); clearErrors(); }
+        window.onclick = function (event) { if (event.target == modal) closeModal(); }
 
-        function clearErrors() {
-            document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
-            document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none');
-        }
+        let uploadedFiles = [];
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const previewContainer = document.getElementById('preview-container');
+        dropZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', () => { Array.from(fileInput.files).forEach(file => { if (!uploadedFiles.some(f => f.name === file.name)) uploadedFiles.push(file); }); updatePreviews(); fileInput.value = ''; });
+        function updatePreviews() { previewContainer.innerHTML = ''; uploadedFiles.forEach((file, index) => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = (e) => { const div = document.createElement('div'); div.className = 'preview-card'; div.innerHTML = `<img src="${e.target.result}"><button type="button" class="remove-img-btn" onclick="removeFile(${index})"><i class="fa-solid fa-xmark"></i></button>`; previewContainer.appendChild(div); }; }); }
+        window.removeFile = function (index) { uploadedFiles.splice(index, 1); updatePreviews(); };
 
-        // --- Add Car Submit Logic ---
+        function showError(inputName, message) { const input = document.querySelector(`[name="${inputName}"]`); if (input) { input.classList.add('error'); let msg = input.parentElement.querySelector('.error-msg'); if (!msg) { msg = document.createElement('div'); msg.className = 'error-msg'; input.parentElement.appendChild(msg); } msg.innerText = message; msg.style.display = 'block'; } }
+        function clearErrors() { document.querySelectorAll('.error').forEach(el => el.classList.remove('error')); document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none'); }
+
         document.getElementById('add-car-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            clearErrors();
-
+            e.preventDefault(); clearErrors();
             const formData = new FormData(e.target);
-            const brand = formData.get('brand').trim();
-            const model = formData.get('model').trim();
-            const year = parseInt(formData.get('year'));
-            const price = parseInt(formData.get('price'));
-            const mileage = parseInt(formData.get('mileage'));
-            
+            const brand = formData.get('brand').trim(); const model = formData.get('model').trim();
+            const year = parseInt(formData.get('year')); const price = parseInt(formData.get('price')); const mileage = parseInt(formData.get('mileage'));
             let isValid = true;
-
             if (!brand) { showError('brand', 'Brand is required'); isValid = false; }
             if (!model) { showError('model', 'Model is required'); isValid = false; }
-            const currentYear = new Date().getFullYear();
-            if (!year || year < 1900 || year > currentYear + 1) {
-                showError('year', `Enter valid year (1900-${currentYear + 1})`);
-                isValid = false;
-            }
-            if (!price || price < 0) { showError('price', 'Price cannot be negative'); isValid = false; }
-            if (mileage < 0) { showError('mileage', 'Mileage cannot be negative'); isValid = false; }
-
-            if (uploadedFiles.length === 0) {
-                document.getElementById('drop-zone').style.borderColor = 'var(--danger)';
-                showToast("Please add at least one photo", "error");
-                isValid = false;
-            } else {
-                document.getElementById('drop-zone').style.borderColor = '#cbd5e1';
-            }
-
+            if (!year || year < 1900 || year > new Date().getFullYear() + 1) { showError('year', 'Invalid year'); isValid = false; }
+            if (!price || price < 0) { showError('price', 'Invalid price'); isValid = false; }
+            if (mileage < 0) { showError('mileage', 'Invalid mileage'); isValid = false; }
+            if (uploadedFiles.length === 0) { document.getElementById('drop-zone').style.borderColor = 'var(--danger)'; showToast("Add at least one photo", "error"); isValid = false; } else { document.getElementById('drop-zone').style.borderColor = '#cbd5e1'; }
             if (!isValid) return;
 
-            const btn = e.target.querySelector('button[type="submit"]');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading...';
-            btn.disabled = true;
-
-            formData.delete('images');
-            uploadedFiles.forEach(file => {
-                formData.append('images', file);
-            });
+            const btn = e.target.querySelector('button[type="submit"]'); const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading...'; btn.disabled = true;
+            formData.delete('images'); uploadedFiles.forEach(file => formData.append('images', file));
 
             try {
-                const res = await fetch(`${API_URL}/admin/cars`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${getToken()}` },
-                    body: formData
-                });
-
-                if (res.ok) {
-                    closeModal();
-                    loadCars();
-                    showToast("Car Added Successfully!", "success"); // GREEN POPUP HERE
-                } else {
-                    const data = await res.json();
-                    showToast(data.error || "Server Error", "error");
-                }
-            } catch (error) {
-                showToast("Connection Failed", "error");
-            } finally {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
+                const res = await fetch(`${API_URL}/admin/cars`, { method: 'POST', headers: { 'Authorization': `Bearer ${getToken()}` }, body: formData });
+                if (res.ok) { closeModal(); loadCars(); showToast("Car Added Successfully!", "success"); }
+                else { const data = await res.json(); showToast(data.error || "Server Error", "error"); }
+            } catch (error) { showToast("Connection Failed", "error"); } finally { btn.innerHTML = originalText; btn.disabled = false; }
         });
 
-        document.querySelectorAll('input, textarea').forEach(input => {
-            input.addEventListener('input', () => {
-                input.classList.remove('error');
-                const msg = input.parentElement.querySelector('.error-msg');
-                if (msg) msg.style.display = 'none';
-            });
-        });
+        document.querySelectorAll('input, textarea').forEach(input => { input.addEventListener('input', () => { input.classList.remove('error'); const msg = input.parentElement.querySelector('.error-msg'); if (msg) msg.style.display = 'none'; }); });
 
         loadCars();
     </script>
 </body>
+
 </html>

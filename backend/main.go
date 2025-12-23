@@ -95,9 +95,13 @@ func authRequired(c *fiber.Ctx) error {
 // --- Handlers ---
 
 // Public: Get All Cars
+// Public: Get All Cars
 func getCars(c *fiber.Ctx) error {
 	var cars []Car
-	DB.Order("created_at desc").Find(&cars)
+    // ADD THIS: .Preload("Images")
+	if result := DB.Preload("Images").Order("created_at desc").Find(&cars); result.Error != nil {
+        return c.Status(500).JSON(fiber.Map{"error": "Database error"})
+    }
 	return c.JSON(cars)
 }
 
