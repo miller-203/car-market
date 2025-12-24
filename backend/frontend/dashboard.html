@@ -13,6 +13,7 @@
             background-color: #f8fafc;
         }
 
+        /* --- Header & Footer (UNTOUCHED) --- */
         .dashboard-header {
             background: white;
             padding: 1rem 2rem;
@@ -32,6 +33,7 @@
             margin: 40px 0 30px 0;
         }
 
+        /* --- Modal Styles --- */
         .modal {
             display: none;
             position: fixed;
@@ -58,7 +60,7 @@
             padding: 40px;
             border-radius: 16px;
             width: 100%;
-            max-width: 600px;
+            max-width: 650px;
             max-height: 90vh;
             overflow-y: auto;
             position: relative;
@@ -85,6 +87,25 @@
             color: var(--danger);
         }
 
+        /* --- RESPONSIVE FORM GRID (New) --- */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Default: 2 Columns */
+            gap: 15px;
+        }
+
+        /* Mobile Breakpoint: Switch to 1 Column */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr; /* 1 Column on phone */
+            }
+            .modal-content {
+                padding: 20px;
+                width: 95%; 
+            }
+        }
+
+        /* --- Admin Card Styles --- */
         .admin-card {
             background: white;
             border-radius: 12px;
@@ -125,6 +146,7 @@
             gap: 10px;
         }
 
+        /* Upload Area */
         .upload-area {
             border: 2px dashed #cbd5e1;
             background: #f8fafc;
@@ -178,62 +200,7 @@
             justify-content: center;
         }
 
-        #toast-container {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 3000;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .toast {
-            min-width: 300px;
-            background: white;
-            padding: 16px 20px;
-            border-radius: 8px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-left: 5px solid;
-            animation: slideIn 0.3s ease-out forwards;
-            opacity: 0;
-            transform: translateX(100%);
-        }
-
-        .toast.success {
-            border-color: #10b981;
-        }
-
-        .toast.success i {
-            color: #10b981;
-        }
-
-        .toast.error {
-            border-color: #ef4444;
-        }
-
-        .toast.error i {
-            color: #ef4444;
-        }
-
-        @keyframes slideIn {
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        @keyframes fadeOut {
-            to {
-                opacity: 0;
-                transform: translateX(100%);
-            }
-        }
-
-        /* Slider Logic Styles */
+        /* Slider Styles */
         .admin-card-img-wrapper {
             position: relative;
             height: 200px;
@@ -272,13 +239,42 @@
             transform: translateY(-50%) scale(1.1);
         }
 
-        .card-prev {
-            left: 5px;
+        .card-prev { left: 5px; }
+        .card-next { right: 5px; }
+
+        /* Toast Notifications */
+        #toast-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        .card-next {
-            right: 5px;
+        .toast {
+            min-width: 300px;
+            background: white;
+            padding: 16px 20px;
+            border-radius: 8px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-left: 5px solid;
+            animation: slideIn 0.3s ease-out forwards;
+            opacity: 0;
+            transform: translateX(100%);
         }
+
+        .toast.success { border-color: #10b981; }
+        .toast.success i { color: #10b981; }
+        .toast.error { border-color: #ef4444; }
+        .toast.error i { color: #ef4444; }
+
+        @keyframes slideIn { to { opacity: 1; transform: translateX(0); } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateX(100%); } }
     </style>
 </head>
 
@@ -303,12 +299,10 @@
                 <h1 style="font-size: 2rem; margin-bottom: 5px;">Inventory</h1>
                 <p style="color: #64748b;">Manage your vehicle listings.</p>
             </div>
-            <button onclick="openModal()" class="btn"
-                style="padding: 12px 25px; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3);">
+            <button onclick="openModal()" class="btn" style="padding: 12px 25px; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3);">
                 <i class="fa-solid fa-plus"></i>  Add New Car
             </button>
         </div>
-
         <div id="admin-list" class="card-grid"></div>
     </div>
 
@@ -316,25 +310,63 @@
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal()">×</span>
             <h2 style="margin-bottom: 25px;">Create New Listing</h2>
-
+            
             <form id="add-car-form">
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div><label style="font-size:0.9rem; font-weight:600;">Brand</label><input type="text" name="brand"
-                            placeholder="BMW" required></div>
-                    <div><label style="font-size:0.9rem; font-weight:600;">Model</label><input type="text" name="model"
-                            placeholder="X5" required></div>
+                <div class="form-grid">
+                    <div><label style="font-size:0.9rem; font-weight:600;">Brand</label><input type="text" name="brand" placeholder="e.g. Volkswagen" required></div>
+                    <div><label style="font-size:0.9rem; font-weight:600;">Model</label><input type="text" name="model" placeholder="e.g. Golf 6" required></div>
                 </div>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
-                    <div><label style="font-size:0.9rem; font-weight:600;">Year</label><input type="number" name="year"
-                            placeholder="2023" required></div>
-                    <div><label style="font-size:0.9rem; font-weight:600;">Mileage (km)</label><input type="number"
-                            name="mileage" placeholder="50000" required></div>
+
+                <div class="form-grid" style="margin-top: 15px;">
+                    <div><label style="font-size:0.9rem; font-weight:600;">Year</label><input type="number" name="year" placeholder="2010" required></div>
+                    <div><label style="font-size:0.9rem; font-weight:600;">Mileage (km)</label><input type="number" name="mileage" placeholder="290000" required></div>
                 </div>
-                <div style="margin-top: 15px;"><label style="font-size:0.9rem; font-weight:600;">Price
-                        (DH)</label><input type="number" name="price" placeholder="Price" required></div>
-                <div style="margin-top: 15px;"><label
-                        style="font-size:0.9rem; font-weight:600;">Description</label><textarea name="description"
-                        rows="3" placeholder="Car details..."></textarea></div>
+
+                <div class="form-grid" style="margin-top: 15px;">
+                    <div>
+                        <label style="font-size:0.9rem; font-weight:600;">Transmission</label>
+                        <select name="transmission" style="width:100%; padding:12px; border:1px solid #cbd5e1; border-radius:8px; background:#f8fafc;">
+                            <option value="Manuelle">Manuelle</option>
+                            <option value="Automatique">Automatique</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size:0.9rem; font-weight:600;">Fuel Type</label>
+                        <select name="fuel_type" style="width:100%; padding:12px; border:1px solid #cbd5e1; border-radius:8px; background:#f8fafc;">
+                            <option value="Diesel">Diesel</option>
+                            <option value="Essence">Essence</option>
+                            <option value="Hybride">Hybride</option>
+                            <option value="Électrique">Électrique</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-grid" style="margin-top: 15px;">
+                    <div><label style="font-size:0.9rem; font-weight:600;">Doors</label><input type="number" name="doors" placeholder="5" value="5"></div>
+                    <div><label style="font-size:0.9rem; font-weight:600;">Fiscal Power (CV)</label><input type="number" name="fiscal_power" placeholder="e.g. 8" required></div>
+                </div>
+
+                <div class="form-grid" style="margin-top: 15px;">
+                    <div>
+                        <label style="font-size:0.9rem; font-weight:600;">Origin</label>
+                        <select name="origin" style="width:100%; padding:12px; border:1px solid #cbd5e1; border-radius:8px; background:#f8fafc;">
+                            <option value="Dédouanée">Dédouanée</option>
+                            <option value="WW Maroc">WW Maroc</option>
+                            <option value="Importée">Importée</option>
+                        </select>
+                    </div>
+                    <div><label style="font-size:0.9rem; font-weight:600;">Condition</label><input type="text" name="condition" placeholder="e.g. Très bon" value="Très bon"></div>
+                </div>
+
+                <div style="margin-top: 15px;">
+                    <label style="font-size:0.9rem; font-weight:600;">Price (DH)</label>
+                    <input type="number" name="price" placeholder="Price" required>
+                </div>
+                
+                <div style="margin-top: 15px;">
+                    <label style="font-size:0.9rem; font-weight:600;">Description</label>
+                    <textarea name="description" rows="3" placeholder="Car details..."></textarea>
+                </div>
 
                 <div style="margin-top: 15px;">
                     <label style="font-size:0.9rem; font-weight:600; display:block; margin-bottom:5px;">Images</label>
@@ -346,15 +378,36 @@
                     <div id="preview-container" class="image-preview-container"></div>
                 </div>
 
-                <button type="submit" class="btn btn-block" style="margin-top: 25px; padding: 15px;">Publish
-                    Car</button>
+                <button type="submit" class="btn btn-block" style="margin-top: 25px; padding: 15px;">Publish Car</button>
             </form>
         </div>
     </div>
-
+    
     <footer id="contact">
-        <div style="text-align: center; padding: 20px; color: #64748b; font-size: 0.9rem;">
-            &copy; 2025 Al Watani Motors. All rights reserved.
+        <div class="container" style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px; text-align: left;">
+            <div>
+                <span class="logo" style="font-size: 1.8rem;">Al Watani</span>
+                <p style="color: #94a3b8; max-width: 300px; margin-top: 10px;">
+                    Morocco's premium destination for luxury and performance vehicles.
+                </p>
+            </div>
+            <div>
+                <h4 style="color: white; margin-bottom: 15px;">Contact Us</h4>
+                <p style="color: #cbd5e1; margin-bottom: 8px;"><i class="fa-solid fa-phone" style="color: var(--primary);"></i>  +212 661 360 143</p>
+                <p style="color: #cbd5e1; margin-bottom: 8px;"><i class="fa-solid fa-envelope" style="color: var(--primary);"></i>  contact@alwatani.ma</p>
+                <p style="color: #cbd5e1;"><i class="fa-solid fa-location-dot" style="color: var(--primary);"></i>  Oujda, Morocco</p>
+            </div>
+            <div>
+                <h4 style="color: white; margin-bottom: 15px;">Follow Us</h4>
+                <div style="display: flex; gap: 15px;">
+                    <a href="#" style="color: #94a3b8;"><i class="fa-brands fa-facebook fa-xl"></i></a>
+                    <a href="#" style="color: #94a3b8;"><i class="fa-brands fa-instagram fa-xl"></i></a>
+                    <a href="#" style="color: #94a3b8;"><i class="fa-brands fa-whatsapp fa-xl"></i></a>
+                </div>
+            </div>
+        </div>
+        <div style="border-top: 1px solid #334155; margin-top: 30px; padding-top: 20px; text-align: center;">
+            <p style="color: #64748b; font-size: 0.9rem;">© 2025 Al Watani Motors. All rights reserved.</p>
         </div>
     </footer>
 
@@ -364,15 +417,8 @@
     <script>
         if (!getToken()) window.location.href = 'login.html';
 
-        // --- HELPER 1: Format Number (1 000) ---
-        function formatNumber(num) {
-            return num.toLocaleString('en-US').replace(/,/g, ' ');
-        }
-
-        // --- HELPER 2: Check for Strict Integer (No decimals/commas) ---
-        function isStrictInteger(value) {
-            return /^[0-9]+$/.test(value);
-        }
+        function formatNumber(num) { return num.toLocaleString('en-US').replace(/,/g, ' '); }
+        function isStrictInteger(value) { return /^[0-9]+$/.test(value); }
 
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
@@ -395,20 +441,12 @@
                     const initialImg = car.image_url.startsWith('http') ? car.image_url : `${API_URL}${car.image_url}`;
                     const hasMultipleImages = car.images && car.images.length > 1;
                     const imageList = hasMultipleImages ? JSON.stringify(car.images.map(img => img.image_url)) : '[]';
-
-                    const buttonsHtml = hasMultipleImages ? `
-                        <button class="card-slider-btn card-prev" onclick="slideCard(event, ${car.id}, -1)"><i class="fa-solid fa-chevron-left"></i></button>
-                        <button class="card-slider-btn card-next" onclick="slideCard(event, ${car.id}, 1)"><i class="fa-solid fa-chevron-right"></i></button>
-                    ` : '';
+                    const buttonsHtml = hasMultipleImages ? `<button class="card-slider-btn card-prev" onclick="slideCard(event, ${car.id}, -1)"><i class="fa-solid fa-chevron-left"></i></button><button class="card-slider-btn card-next" onclick="slideCard(event, ${car.id}, 1)"><i class="fa-solid fa-chevron-right"></i></button>` : '';
 
                     container.innerHTML += `
                         <div class="admin-card">
-                            <a href="detail.html?id=${car.id}" style="text-decoration: none; color: inherit; display: block;" 
-                               id="card-${car.id}" data-current-index="0" data-images='${imageList}'>
-                                <div class="admin-card-img-wrapper">
-                                    ${buttonsHtml}
-                                    <img src="${initialImg}" class="admin-card-img" id="img-${car.id}">
-                                </div>
+                            <a href="detail.html?id=${car.id}" style="text-decoration: none; color: inherit; display: block;" id="card-${car.id}" data-current-index="0" data-images='${imageList}'>
+                                <div class="admin-card-img-wrapper">${buttonsHtml}<img src="${initialImg}" class="admin-card-img" id="img-${car.id}"></div>
                                 <div class="admin-card-body">
                                     <h3 style="font-size:1.1rem; margin-bottom:5px;">${car.brand} ${car.model}</h3>
                                     <p style="color:var(--primary); font-weight:800; font-size:1.2rem;">${formatNumber(car.price)} DH</p>
@@ -422,8 +460,7 @@
                                 <a href="detail.html?id=${car.id}" class="btn btn-outline" style="flex:1; border-color:#cbd5e1; color:#64748b; font-size:0.9rem; text-align:center;"><i class="fa-solid fa-eye"></i> View</a>
                                 <button onclick="deleteCar(${car.id})" class="btn btn-danger" style="flex:1; font-size:0.9rem;"><i class="fa-solid fa-trash"></i> Delete</button>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 });
             } catch (err) { console.error(err); }
         }
@@ -435,8 +472,7 @@
             let currentIndex = parseInt(card.getAttribute('data-current-index'));
             const images = JSON.parse(card.getAttribute('data-images'));
             currentIndex += direction;
-            if (currentIndex >= images.length) currentIndex = 0;
-            else if (currentIndex < 0) currentIndex = images.length - 1;
+            if (currentIndex >= images.length) currentIndex = 0; else if (currentIndex < 0) currentIndex = images.length - 1;
             card.setAttribute('data-current-index', currentIndex);
             let newPath = images[currentIndex];
             if (!newPath.startsWith('http')) newPath = `${API_URL}${newPath}`;
@@ -454,16 +490,16 @@
         const modal = document.getElementById('car-modal');
         function openModal() { modal.classList.add('show'); document.body.style.overflow = 'hidden'; }
         function closeModal() { modal.classList.remove('show'); document.body.style.overflow = 'auto'; document.getElementById('add-car-form').reset(); uploadedFiles = []; updatePreviews(); clearErrors(); }
-        window.onclick = function (event) { if (event.target == modal) closeModal(); }
+        window.onclick = function(event) { if (event.target == modal) closeModal(); }
 
         let uploadedFiles = [];
         const dropZone = document.getElementById('drop-zone');
         const fileInput = document.getElementById('file-input');
         const previewContainer = document.getElementById('preview-container');
         dropZone.addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', () => { Array.from(fileInput.files).forEach(file => { if (!uploadedFiles.some(f => f.name === file.name)) uploadedFiles.push(file); }); updatePreviews(); fileInput.value = ''; });
+        fileInput.addEventListener('change', () => { Array.from(fileInput.files).forEach(file => { if(!uploadedFiles.some(f => f.name === file.name)) uploadedFiles.push(file); }); updatePreviews(); fileInput.value = ''; });
         function updatePreviews() { previewContainer.innerHTML = ''; uploadedFiles.forEach((file, index) => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = (e) => { const div = document.createElement('div'); div.className = 'preview-card'; div.innerHTML = `<img src="${e.target.result}"><button type="button" class="remove-img-btn" onclick="removeFile(${index})"><i class="fa-solid fa-xmark"></i></button>`; previewContainer.appendChild(div); }; }); }
-        window.removeFile = function (index) { uploadedFiles.splice(index, 1); updatePreviews(); };
+        window.removeFile = function(index) { uploadedFiles.splice(index, 1); updatePreviews(); };
 
         function showError(inputName, message) { const input = document.querySelector(`[name="${inputName}"]`); if (input) { input.classList.add('error'); let msg = input.parentElement.querySelector('.error-msg'); if (!msg) { msg = document.createElement('div'); msg.className = 'error-msg'; input.parentElement.appendChild(msg); } msg.innerText = message; msg.style.display = 'block'; } }
         function clearErrors() { document.querySelectorAll('.error').forEach(el => el.classList.remove('error')); document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none'); }
@@ -471,24 +507,16 @@
         document.getElementById('add-car-form').addEventListener('submit', async (e) => {
             e.preventDefault(); clearErrors();
             const formData = new FormData(e.target);
-
-            const brand = formData.get('brand').trim();
-            const model = formData.get('model').trim();
-            const yearVal = formData.get('year');
-            const priceVal = formData.get('price');
-            const mileageVal = formData.get('mileage');
-
+            const brand = formData.get('brand').trim(); const model = formData.get('model').trim();
+            const yearVal = formData.get('year'); const priceVal = formData.get('price'); const mileageVal = formData.get('mileage');
             let isValid = true;
-            if (!brand) { showError('brand', 'Brand is required'); isValid = false; }
-            if (!model) { showError('model', 'Model is required'); isValid = false; }
-
-            // STRICT INTEGER CHECKS
-            const currentYear = new Date().getFullYear();
-            if (!isStrictInteger(yearVal) || parseInt(yearVal) < 1900 || parseInt(yearVal) > currentYear + 1) { showError('year', 'Enter a valid year'); isValid = false; }
-            if (!isStrictInteger(priceVal) || parseInt(priceVal) < 0) { showError('price', 'Enter a whole number (no dots/commas)'); isValid = false; }
-            if (!isStrictInteger(mileageVal) || parseInt(mileageVal) < 0) { showError('mileage', 'Enter a whole number (no dots/commas)'); isValid = false; }
-
+            if (!brand) { showError('brand', 'Required'); isValid = false; }
+            if (!model) { showError('model', 'Required'); isValid = false; }
+            if (!isStrictInteger(yearVal) || parseInt(yearVal) < 1900 || parseInt(yearVal) > new Date().getFullYear() + 1) { showError('year', 'Invalid year'); isValid = false; }
+            if (!isStrictInteger(priceVal) || parseInt(priceVal) < 0) { showError('price', 'Invalid price'); isValid = false; }
+            if (!isStrictInteger(mileageVal) || parseInt(mileageVal) < 0) { showError('mileage', 'Invalid mileage'); isValid = false; }
             if (uploadedFiles.length === 0) { document.getElementById('drop-zone').style.borderColor = 'var(--danger)'; showToast("Add at least one photo", "error"); isValid = false; } else { document.getElementById('drop-zone').style.borderColor = '#cbd5e1'; }
+            
             if (!isValid) return;
 
             const btn = e.target.querySelector('button[type="submit"]'); const originalText = btn.innerHTML;
@@ -497,15 +525,12 @@
 
             try {
                 const res = await fetch(`${API_URL}/admin/cars`, { method: 'POST', headers: { 'Authorization': `Bearer ${getToken()}` }, body: formData });
-                if (res.ok) { closeModal(); loadCars(); showToast("Car Added Successfully!", "success"); }
+                if (res.ok) { closeModal(); loadCars(); showToast("Car Added Successfully!", "success"); } 
                 else { const data = await res.json(); showToast(data.error || "Server Error", "error"); }
             } catch (error) { showToast("Connection Failed", "error"); } finally { btn.innerHTML = originalText; btn.disabled = false; }
         });
-
         document.querySelectorAll('input, textarea').forEach(input => { input.addEventListener('input', () => { input.classList.remove('error'); const msg = input.parentElement.querySelector('.error-msg'); if (msg) msg.style.display = 'none'; }); });
-
         loadCars();
     </script>
 </body>
-
 </html>
