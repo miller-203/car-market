@@ -68,6 +68,9 @@
         let currentImageIndex = 0;
         let carImages = [];
 
+        function formatNumber(num) {
+            return num.toLocaleString('en-US').replace(/,/g, ' ');
+        }
         // --- 1. HEADER LOGIC ---
         const navContainer = document.getElementById('nav-links');
         if (token) {
@@ -87,7 +90,7 @@
             <a href="dashboard.html" class="btn" style="background: var(--primary); color: white; padding: 10px 20px; border-radius: 50px; font-size: 0.9rem; padding: 8px 10px;">
                 <i class="fa-solid fa-gauge-high"></i> &nbsp;Dashboard
             </a>
-            <button onclick="logout()" class="btn" style="background: transparent; border: 2px solid #fee2e2; color: var(--danger); padding: 8px 20px; border-radius: 50px; font-size: 0.9rem; margin-left: 10px;">
+            <button onclick="logout()" class="btn" style="background: transparent; border: 2px solid #fee2e2; color: var(--danger); padding: 8px 20px; border-radius: 50px; font-size: 0.9rem; margin-left: 0;">
                 <i class="fa-solid fa-power-off"></i> &nbsp;Logout
             </button>
         `;
@@ -162,7 +165,7 @@
                         </div>
                         
                         <h1 style="font-size: 2.5rem; margin-bottom: 10px; line-height: 1.1;">${car.brand} ${car.model}</h1>
-                        <h3 class="price" style="font-size: 2.5rem; margin-bottom: 25px; color:var(--dark);">$${car.price.toLocaleString()}</h3>
+                        <h3 class="price" style="font-size: 2.5rem; margin-bottom: 25px; color:var(--dark);">${formatNumber(car.price)} DH</h3>
 
                         <div class="specs-row" style="margin-bottom: 30px; padding: 20px; background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
                             <div style="display:flex; flex-direction:column; gap:5px;">
@@ -172,7 +175,7 @@
                             <div style="width:1px; background:#cbd5e1;"></div>
                             <div style="display:flex; flex-direction:column; gap:5px;">
                                 <span style="color:#64748b; font-size:0.85rem;">Mileage</span>
-                                <span style="font-weight:700; color:var(--dark); font-size:1.1rem;"><i class="fa-solid fa-gauge"></i> ${car.mileage.toLocaleString()} km</span>
+                                <span style="font-weight:700; color:var(--dark); font-size:1.1rem;"><i class="fa-solid fa-gauge"></i> ${formatNumber(car.mileage)} km</span>
                             </div>
                         </div>
 

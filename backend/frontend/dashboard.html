@@ -13,7 +13,6 @@
             background-color: #f8fafc;
         }
 
-        /* Dashboard Header */
         .dashboard-header {
             background: white;
             padding: 1rem 2rem;
@@ -234,11 +233,10 @@
             }
         }
 
-        /* --- NEW SLIDER STYLES FOR DASHBOARD --- */
+        /* Slider Logic Styles */
         .admin-card-img-wrapper {
             position: relative;
             height: 200px;
-            /* Fixed height for dashboard */
             width: 100%;
             overflow: hidden;
         }
@@ -266,7 +264,6 @@
             font-size: 0.8rem;
             z-index: 10;
             opacity: 0.8;
-            /* Always visible on dashboard */
             transition: all 0.2s;
         }
 
@@ -317,7 +314,7 @@
 
     <div id="car-modal" class="modal">
         <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <span class="close-btn" onclick="closeModal()">×</span>
             <h2 style="margin-bottom: 25px;">Create New Listing</h2>
 
             <form id="add-car-form">
@@ -333,8 +330,8 @@
                     <div><label style="font-size:0.9rem; font-weight:600;">Mileage (km)</label><input type="number"
                             name="mileage" placeholder="50000" required></div>
                 </div>
-                <div style="margin-top: 15px;"><label style="font-size:0.9rem; font-weight:600;">Price ($)</label><input
-                        type="number" name="price" placeholder="Price" required></div>
+                <div style="margin-top: 15px;"><label style="font-size:0.9rem; font-weight:600;">Price
+                        (DH)</label><input type="number" name="price" placeholder="Price" required></div>
                 <div style="margin-top: 15px;"><label
                         style="font-size:0.9rem; font-weight:600;">Description</label><textarea name="description"
                         rows="3" placeholder="Car details..."></textarea></div>
@@ -356,30 +353,8 @@
     </div>
 
     <footer id="contact">
-        <div class="container" style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px; text-align: left;">
-            <div>
-                <span class="logo" style="font-size: 1.8rem;">Al Watani</span>
-                <p style="color: #94a3b8; max-width: 300px; margin-top: 10px;">
-                    Morocco's premium destination for luxury and performance vehicles.
-                </p>
-            </div>
-            <div>
-                <h4 style="color: white; margin-bottom: 15px;">Contact Us</h4>
-                <p style="color: #cbd5e1; margin-bottom: 8px;"><i class="fa-solid fa-phone" style="color: var(--primary);"></i>  +212 661 360 143</p>
-                <p style="color: #cbd5e1; margin-bottom: 8px;"><i class="fa-solid fa-envelope" style="color: var(--primary);"></i>  contact@alwatani.ma</p>
-                <p style="color: #cbd5e1;"><i class="fa-solid fa-location-dot" style="color: var(--primary);"></i>  Oujda, Morocco</p>
-            </div>
-            <div>
-                <h4 style="color: white; margin-bottom: 15px;">Follow Us</h4>
-                <div style="display: flex; gap: 15px;">
-                    <a href="#" style="color: #94a3b8;"><i class="fa-brands fa-facebook fa-xl"></i></a>
-                    <a href="#" style="color: #94a3b8;"><i class="fa-brands fa-instagram fa-xl"></i></a>
-                    <a href="#" style="color: #94a3b8;"><i class="fa-brands fa-whatsapp fa-xl"></i></a>
-                </div>
-            </div>
-        </div>
-        <div style="border-top: 1px solid #334155; margin-top: 30px; padding-top: 20px; text-align: center;">
-            <p style="color: #64748b; font-size: 0.9rem;">© 2025 Al Watani Motors. All rights reserved.</p>
+        <div style="text-align: center; padding: 20px; color: #64748b; font-size: 0.9rem;">
+            &copy; 2025 Al Watani Motors. All rights reserved.
         </div>
     </footer>
 
@@ -388,6 +363,16 @@
     <script src="app.js"></script>
     <script>
         if (!getToken()) window.location.href = 'login.html';
+
+        // --- HELPER 1: Format Number (1 000) ---
+        function formatNumber(num) {
+            return num.toLocaleString('en-US').replace(/,/g, ' ');
+        }
+
+        // --- HELPER 2: Check for Strict Integer (No decimals/commas) ---
+        function isStrictInteger(value) {
+            return /^[0-9]+$/.test(value);
+        }
 
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
@@ -399,7 +384,6 @@
             setTimeout(() => { toast.style.animation = 'fadeOut 0.3s ease-in forwards'; setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
-        // --- LOAD CARS WITH SLIDER LOGIC ---
         async function loadCars() {
             try {
                 const res = await fetch(`${API_URL}/cars`);
@@ -409,97 +393,64 @@
 
                 cars.forEach(car => {
                     const initialImg = car.image_url.startsWith('http') ? car.image_url : `${API_URL}${car.image_url}`;
-
-                    // Logic for Slider Buttons
                     const hasMultipleImages = car.images && car.images.length > 1;
                     const imageList = hasMultipleImages ? JSON.stringify(car.images.map(img => img.image_url)) : '[]';
 
                     const buttonsHtml = hasMultipleImages ? `
-                        <button class="card-slider-btn card-prev" onclick="slideCard(event, ${car.id}, -1)">
-                            <i class="fa-solid fa-chevron-left"></i>
-                        </button>
-                        <button class="card-slider-btn card-next" onclick="slideCard(event, ${car.id}, 1)">
-                            <i class="fa-solid fa-chevron-right"></i>
-                        </button>
+                        <button class="card-slider-btn card-prev" onclick="slideCard(event, ${car.id}, -1)"><i class="fa-solid fa-chevron-left"></i></button>
+                        <button class="card-slider-btn card-next" onclick="slideCard(event, ${car.id}, 1)"><i class="fa-solid fa-chevron-right"></i></button>
                     ` : '';
 
                     container.innerHTML += `
                         <div class="admin-card">
                             <a href="detail.html?id=${car.id}" style="text-decoration: none; color: inherit; display: block;" 
                                id="card-${car.id}" data-current-index="0" data-images='${imageList}'>
-                                
                                 <div class="admin-card-img-wrapper">
                                     ${buttonsHtml}
                                     <img src="${initialImg}" class="admin-card-img" id="img-${car.id}">
                                 </div>
-
                                 <div class="admin-card-body">
                                     <h3 style="font-size:1.1rem; margin-bottom:5px;">${car.brand} ${car.model}</h3>
-                                    <p style="color:var(--primary); font-weight:800; font-size:1.2rem;">$${car.price.toLocaleString()}</p>
-                                    
+                                    <p style="color:var(--primary); font-weight:800; font-size:1.2rem;">${formatNumber(car.price)} DH</p>
                                     <div class="admin-stats">
                                         <span><i class="fa-solid fa-calendar"></i> ${car.year}</span>
-                                        <span><i class="fa-solid fa-gauge"></i> ${car.mileage.toLocaleString()}km</span>
-                                        <span style="grid-column: span 2;"><i class="fa-solid fa-hashtag"></i> ID: ${car.id}</span>
+                                        <span><i class="fa-solid fa-gauge"></i> ${formatNumber(car.mileage)} km</span>
                                     </div>
                                 </div>
                             </a>
-
                             <div class="admin-actions">
-                                <a href="detail.html?id=${car.id}" class="btn btn-outline" style="flex:1; border-color:#cbd5e1; color:#64748b; font-size:0.9rem; text-align:center;">
-                                    <i class="fa-solid fa-eye"></i> View
-                                </a>
-                                <button onclick="deleteCar(${car.id})" class="btn btn-danger" style="flex:1; font-size:0.9rem;">
-                                    <i class="fa-solid fa-trash"></i> Delete
-                                </button>
+                                <a href="detail.html?id=${car.id}" class="btn btn-outline" style="flex:1; border-color:#cbd5e1; color:#64748b; font-size:0.9rem; text-align:center;"><i class="fa-solid fa-eye"></i> View</a>
+                                <button onclick="deleteCar(${car.id})" class="btn btn-danger" style="flex:1; font-size:0.9rem;"><i class="fa-solid fa-trash"></i> Delete</button>
                             </div>
                         </div>
                     `;
                 });
-            } catch (err) {
-                console.error("Error loading cars:", err);
-            }
+            } catch (err) { console.error(err); }
         }
 
-        // --- SLIDER FUNCTION ---
         function slideCard(event, carId, direction) {
-            // Stop the link from opening detail page when clicking buttons
-            event.preventDefault();
-            event.stopPropagation();
-
+            event.preventDefault(); event.stopPropagation();
             const card = document.getElementById(`card-${carId}`);
             const imgElement = document.getElementById(`img-${carId}`);
-
             let currentIndex = parseInt(card.getAttribute('data-current-index'));
             const images = JSON.parse(card.getAttribute('data-images'));
-
             currentIndex += direction;
             if (currentIndex >= images.length) currentIndex = 0;
             else if (currentIndex < 0) currentIndex = images.length - 1;
-
             card.setAttribute('data-current-index', currentIndex);
-
             let newPath = images[currentIndex];
             if (!newPath.startsWith('http')) newPath = `${API_URL}${newPath}`;
             imgElement.src = newPath;
         }
 
-        // --- Delete Logic ---
         async function deleteCar(id) {
             if (!confirm("Are you sure?")) return;
             try {
-                await fetch(`${API_URL}/admin/cars/${id}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${getToken()}` }
-                });
-                showToast("Car deleted successfully", "success");
-                loadCars();
-            } catch (err) {
-                showToast("Failed to delete car", "error");
-            }
+                await fetch(`${API_URL}/admin/cars/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${getToken()}` } });
+                showToast("Car deleted successfully", "success"); loadCars();
+            } catch (err) { showToast("Failed to delete", "error"); }
         }
 
-        // --- Modal & Form Logic (Same as before) ---
         const modal = document.getElementById('car-modal');
         function openModal() { modal.classList.add('show'); document.body.style.overflow = 'hidden'; }
         function closeModal() { modal.classList.remove('show'); document.body.style.overflow = 'auto'; document.getElementById('add-car-form').reset(); uploadedFiles = []; updatePreviews(); clearErrors(); }
@@ -520,14 +471,23 @@
         document.getElementById('add-car-form').addEventListener('submit', async (e) => {
             e.preventDefault(); clearErrors();
             const formData = new FormData(e.target);
-            const brand = formData.get('brand').trim(); const model = formData.get('model').trim();
-            const year = parseInt(formData.get('year')); const price = parseInt(formData.get('price')); const mileage = parseInt(formData.get('mileage'));
+
+            const brand = formData.get('brand').trim();
+            const model = formData.get('model').trim();
+            const yearVal = formData.get('year');
+            const priceVal = formData.get('price');
+            const mileageVal = formData.get('mileage');
+
             let isValid = true;
             if (!brand) { showError('brand', 'Brand is required'); isValid = false; }
             if (!model) { showError('model', 'Model is required'); isValid = false; }
-            if (!year || year < 1900 || year > new Date().getFullYear() + 1) { showError('year', 'Invalid year'); isValid = false; }
-            if (!price || price < 0) { showError('price', 'Invalid price'); isValid = false; }
-            if (mileage < 0) { showError('mileage', 'Invalid mileage'); isValid = false; }
+
+            // STRICT INTEGER CHECKS
+            const currentYear = new Date().getFullYear();
+            if (!isStrictInteger(yearVal) || parseInt(yearVal) < 1900 || parseInt(yearVal) > currentYear + 1) { showError('year', 'Enter a valid year'); isValid = false; }
+            if (!isStrictInteger(priceVal) || parseInt(priceVal) < 0) { showError('price', 'Enter a whole number (no dots/commas)'); isValid = false; }
+            if (!isStrictInteger(mileageVal) || parseInt(mileageVal) < 0) { showError('mileage', 'Enter a whole number (no dots/commas)'); isValid = false; }
+
             if (uploadedFiles.length === 0) { document.getElementById('drop-zone').style.borderColor = 'var(--danger)'; showToast("Add at least one photo", "error"); isValid = false; } else { document.getElementById('drop-zone').style.borderColor = '#cbd5e1'; }
             if (!isValid) return;
 

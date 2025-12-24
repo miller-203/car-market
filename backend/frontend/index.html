@@ -99,6 +99,9 @@
     <script>
         const token = getToken();
 
+        function formatNumber(num) {
+            return num.toLocaleString('en-US').replace(/,/g, ' ');
+        }
         // 1. HEADER LOGIC
         if (token) {
             const loginBtn = document.querySelector('header .btn');
@@ -109,12 +112,12 @@
             navDiv.style.alignItems = "center";
             
             navDiv.innerHTML = `
-                <a href="dashboard.html" class="btn" style="margin-left:20px; background:var(--primary); border:none; border-radius:50px; padding:8px 15px;">
-                    <i class="fa-solid fa-gauge-high"></i> Dashboard
-                </a>
-                <button onclick="logout()" class="btn" style="margin-left:10px; background:transparent; border:2px solid #fee2e2; border-radius:50px; color:var(--danger); padding:6px 15px;">
-                    <i class="fa-solid fa-power-off"></i> Logout
-                </button>
+                <a href="dashboard.html" class="btn" style="background: var(--primary); color: white; padding: 10px 20px; border-radius: 50px; font-size: 0.9rem; padding: 8px 10px;">
+                <i class="fa-solid fa-gauge-high"></i> &nbsp;Dashboard
+            </a>
+            <button onclick="logout()" class="btn" style="background: transparent; border: 2px solid #fee2e2; color: var(--danger); padding: 8px 20px; border-radius: 50px; font-size: 0.9rem; margin-left: 15px;">
+                <i class="fa-solid fa-power-off"></i> &nbsp;Logout
+            </button>
             `;
             document.querySelector('header').appendChild(navDiv);
         }
@@ -155,11 +158,11 @@
                                 
                                 <div class="specs-row">
                                     <span class="spec-badge"><i class="fa-solid fa-calendar"></i> ${car.year}</span>
-                                    <span class="spec-badge"><i class="fa-solid fa-gauge"></i> ${car.mileage.toLocaleString()} km</span>
+                                    <span class="spec-badge"><i class="fa-solid fa-gauge"></i> ${formatNumber(car.mileage)} km</span>
                                 </div>
                                 
                                 <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:auto;">
-                                    <p class="price">$${car.price.toLocaleString()}</p>
+                                    <p class="price">${formatNumber(car.price)} DH</p>
                                     <span style="color:var(--primary); font-size:0.9rem; font-weight:600;">View <i class="fa-solid fa-arrow-right"></i></span>
                                 </div>
                             </div>
