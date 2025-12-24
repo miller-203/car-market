@@ -449,11 +449,14 @@
                                 <div class="admin-card-img-wrapper">${buttonsHtml}<img src="${initialImg}" class="admin-card-img" id="img-${car.id}"></div>
                                 <div class="admin-card-body">
                                     <h3 style="font-size:1.1rem; margin-bottom:5px;">${car.brand} ${car.model}</h3>
-                                    <p style="color:var(--primary); font-weight:800; font-size:1.2rem;">${formatNumber(car.price)} DH</p>
-                                    <div class="admin-stats">
-                                        <span><i class="fa-solid fa-calendar"></i> ${car.year}</span>
-                                        <span><i class="fa-solid fa-gauge"></i> ${formatNumber(car.mileage)} km</span>
+                                    </br>
+                                    <div class="specs-row">
+                                        <span class="spec-badge"><i class="fa-solid fa-calendar"></i> ${car.year}</span>
+                                        <span class="spec-badge"><i class="fa-solid fa-gauge"></i> ${formatNumber(car.mileage)} km</span>
+                                        <span class="spec-badge"><i class="fa-solid fa-gears"></i> ${car.transmission}</span>
+                                        <span class="spec-badge"><i class="fa-solid fa-gas-pump"></i> ${car.fuel_type}</span>
                                     </div>
+                                    <p style="color:var(--primary); font-weight:800; font-size:1.2rem;">${formatNumber(car.price)} DH</p>
                                 </div>
                             </a>
                             <div class="admin-actions">

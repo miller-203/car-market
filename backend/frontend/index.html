@@ -155,10 +155,12 @@
                             </div>
                             <div class="card-body">
                                 <h3 class="card-title">${car.brand} ${car.model}</h3>
-                                
+                                </br>
                                 <div class="specs-row">
                                     <span class="spec-badge"><i class="fa-solid fa-calendar"></i> ${car.year}</span>
                                     <span class="spec-badge"><i class="fa-solid fa-gauge"></i> ${formatNumber(car.mileage)} km</span>
+                                    <span class="spec-badge"><i class="fa-solid fa-gears"></i> ${car.transmission}</span>
+                                    <span class="spec-badge"><i class="fa-solid fa-gas-pump"></i> ${car.fuel_type}</span>
                                 </div>
                                 
                                 <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:auto;">
