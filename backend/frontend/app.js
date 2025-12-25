@@ -1,4 +1,4 @@
-const API_URL = ""; // Change this when deploying
+const API_URL = "";
 
 function getToken() {
     return localStorage.getItem('token');

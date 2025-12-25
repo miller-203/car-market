@@ -1,4 +1,4 @@
--- Create the Cars table
+-- Create the Cars table (UPDATED WITH NEW FIELDS)
 CREATE TABLE IF NOT EXISTS cars (
     id SERIAL PRIMARY KEY,
     brand VARCHAR(100) NOT NULL,
@@ -8,6 +8,15 @@ CREATE TABLE IF NOT EXISTS cars (
     price INT NOT NULL,
     description TEXT,
     image_url TEXT,
+    
+    -- New Fields Added
+    transmission VARCHAR(50),
+    fuel_type VARCHAR(50),
+    doors INT,
+    origin VARCHAR(100),
+    fiscal_power INT,
+    condition VARCHAR(100),
+    
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -24,9 +33,7 @@ CREATE TABLE IF NOT EXISTS car_images (
     image_url TEXT NOT NULL
 );
 
--- Insert a sample admin (Password is 'admin123')
--- The hash below is generated using bcrypt cost 10 for 'admin123'
+-- Sample Admin (password: admin123)
 INSERT INTO admins (username, password_hash) 
-VALUES ('admin', '$2a$10$7/OceZq.vV8b4L5/Q5.dZOu.y.t.y/..hash..PLACEHOLDER');
--- Note: You should generate a real hash in Go code, but for quick testing, 
--- use the registration logic or an online bcrypt generator.
+VALUES ('admin', '$2a$10$7/OceZq.vV8b4L5/Q5.dZOu.y.t.y/..hash..PLACEHOLDER')
+ON CONFLICT (username) DO NOTHING;
