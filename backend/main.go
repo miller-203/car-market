@@ -145,63 +145,65 @@ func login(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"token": t})
 }
 
+// Admin: Add Car
 func createCar(c *fiber.Ctx) error {
-	form, err := c.MultipartForm()
-	if err != nil {
-		return c.Status(400).JSON(fiber.Map{"error": "Parse error"})
-	}
+    form, err := c.MultipartForm()
+    if err != nil {
+        return c.Status(400).JSON(fiber.Map{"error": "Parse error"})
+    }
 
-	year, _ := strconv.Atoi(c.FormValue("year"))
-	mileage, _ := strconv.Atoi(c.FormValue("mileage"))
-	price, _ := strconv.Atoi(c.FormValue("price"))
+    year, _ := strconv.Atoi(c.FormValue("year"))
+    mileage, _ := strconv.Atoi(c.FormValue("mileage"))
+    price, _ := strconv.Atoi(c.FormValue("price"))
     doors, _ := strconv.Atoi(c.FormValue("doors"))
     fiscalPower, _ := strconv.Atoi(c.FormValue("fiscal_power"))
 
-	car := Car{
-		Brand:        c.FormValue("brand"),
-		Model:        c.FormValue("model"),
-		Year:         year,
-		Mileage:      mileage,
-		Price:        price,
-		Description:  c.FormValue("description"),
+    car := Car{
+        Brand:        c.FormValue("brand"),
+        Model:        c.FormValue("model"),
+        Year:         year,
+        Mileage:      mileage,
+        Price:        price,
+        Description:  c.FormValue("description"),
         Transmission: c.FormValue("transmission"),
         FuelType:     c.FormValue("fuel_type"),
         Doors:        doors,
         Origin:       c.FormValue("origin"),
         FiscalPower:  fiscalPower,
         Condition:    c.FormValue("condition"),
-	}
+    }
 
-	files := form.File["images"]
-	var gallery []CarImage
+    files := form.File["images"]
+    var gallery []CarImage
 
-    // --- FIX: Create uploads folder if missing ---
+    // --- FIX START: Create 'uploads' folder if it doesn't exist ---
     if _, err := os.Stat("./uploads"); os.IsNotExist(err) {
         os.MkdirAll("./uploads", 0755)
     }
+    // --- FIX END ---
 
-	for i, file := range files {
-		filename := fmt.Sprintf("%d_%d_%s", time.Now().Unix(), i, file.Filename)
-		path := fmt.Sprintf("/uploads/%s", filename)
+    for i, file := range files {
+        filename := fmt.Sprintf("%d_%d_%s", time.Now().Unix(), i, file.Filename)
+        path := fmt.Sprintf("/uploads/%s", filename)
 
-		if err := c.SaveFile(file, "."+path); err != nil {
-			fmt.Println("Error saving file:", err)
-			continue
-		}
+        if err := c.SaveFile(file, "."+path); err != nil {
+            fmt.Println("Error saving file:", err)
+            continue
+        }
 
-		if i == 0 {
-			car.ImageURL = path
-		}
-		gallery = append(gallery, CarImage{ImageURL: path})
-	}
+        if i == 0 {
+            car.ImageURL = path
+        }
+        gallery = append(gallery, CarImage{ImageURL: path})
+    }
 
-	car.Images = gallery
+    car.Images = gallery
 
-	if result := DB.Create(&car); result.Error != nil {
-		return c.Status(500).JSON(fiber.Map{"error": "Database error"})
-	}
+    if result := DB.Create(&car); result.Error != nil {
+        return c.Status(500).JSON(fiber.Map{"error": "Database error"})
+    }
 
-	return c.Status(201).JSON(car)
+    return c.Status(201).JSON(car)
 }
 
 func deleteCar(c *fiber.Ctx) error {
