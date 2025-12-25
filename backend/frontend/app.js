@@ -1,4 +1,4 @@
-const API_URL = "";
+const API_URL = ""; // Add your API URL here
 
 function getToken() {
     return localStorage.getItem('token');
